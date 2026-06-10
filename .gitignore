@@ -4,3 +4,10 @@ node_modules/
 .DS_Store
 __pycache__/
 *.pyc
+CLAUDE.md
+# 原型备份文件
+protosystem/*.bak
+protosystem/*.keep
+protosystem/index.html.v*
+protosystem/js/*.bak
+protosystem/js/*.v*

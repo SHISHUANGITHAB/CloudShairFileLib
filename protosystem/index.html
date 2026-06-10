@@ -53,6 +53,15 @@
         .btn-default { background: white; color: #333; border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 16px; cursor: pointer; font-size: 14px; }
         .btn-default:hover { color: #1890ff; border-color: #1890ff; }
         .notif-dot { width: 6px; height: 6px; background: #ff4d4f; border-radius: 50%; display: inline-block; }
+        .push-selector { display: flex; gap: 12px; height: 260px; }
+        .push-left { flex:1; border:1px solid #e5e7eb; border-radius:6px; padding:8px; overflow-y:auto; }
+        .push-middle { display:flex; align-items:center; justify-content:center; width:40px; }
+        .push-right { flex:1; border:1px solid #e5e7eb; border-radius:6px; padding:8px; overflow-y:auto; }
+        .push-arrow-btn { width:36px; height:36px; border-radius:50%; background:#1890ff; color:white; border:none; cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center; }
+        .push-arrow-btn:hover { background:#40a9ff; }
+        .push-remove-btn { cursor:pointer; color:#ff4d4f; font-size:12px; padding:2px 4px; border-radius:3px; }
+        .push-remove-btn:hover { background:#fff1f0; }
+        .dept-check { width:14px; height:14px; accent-color:#1890ff; cursor:pointer; }
         .mock-chart-bar { height: 120px; display: flex; align-items: flex-end; gap: 8px; padding: 10px 0; }
         .mock-chart-bar .bar { width: 24px; border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.3s; }
         .fade-in { animation: fadeIn 0.25s ease; }
@@ -60,6 +69,34 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #d9d9d9; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #bfbfbf; }
+        /* 项目档案一览组件样式 */
+        .pj-header { margin-bottom: 16px; }
+        .pj-header-row { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+        .pj-label { color: #606266; font-weight: 500; }
+        .pj-value { color: #303133; }
+        .pj-status-tag { padding: 2px 10px; border-radius: 12px; font-size: 12px; color: #fff; }
+        .pj-status-tag.pj-archived { background: #67c23a; }
+        .pj-status-tag.pj-partial { background: #e6a23c; }
+        .pj-status-tag.pj-nofile { background: #909399; }
+        .pj-section-title { background: #f5f7fa; padding: 8px 14px; font-weight: 600; color: #303133; border-left: 4px solid #409eff; margin-top: 14px; margin-bottom: 0; font-size: 14px; }
+        .pj-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .pj-table th { text-align: left; padding: 10px 12px; border-bottom: 1px solid #ebeef5; background: #fafafa; color: #606266; font-weight: 500; }
+        .pj-table td { padding: 10px 12px; border-bottom: 1px solid #ebeef5; color: #303133; }
+        .pj-table tr:hover td { background: #f5f7fa; }
+        .pj-subcat-cell { font-weight: 500; color: #606266; vertical-align: middle; }
+        .pj-link { color: #409eff; cursor: pointer; text-decoration: none; }
+        .pj-link:hover { text-decoration: underline; }
+        .pj-time { color: #909399; font-size: 12px; }
+        .pj-history { color: #909399; font-size: 12px; }
+        .pj-empty { color: #c0c4cc; text-align: center; font-style: italic; }
+        .pj-footer { text-align: center; margin-top: 18px; padding-bottom: 8px; }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; line-height: 1.5; }
+        .tag-success { background: #e1f3d8; color: #67c23a; border: 1px solid #c2e7b0; }
+        .tag-warning { background: #faecd8; color: #e6a23c; border: 1px solid #f5dab1; }
+        .btn { display: inline-block; line-height: 1; white-space: nowrap; cursor: pointer; border: 1px solid #dcdfe6; outline: none; transition: .1s; font-weight: 500; font-size: 12px; border-radius: 3px; }
+        .btn-sm { padding: 5px 12px; }
+        .btn-orange { color: #fff; background-color: #e6a23c; border-color: #e6a23c; }
+        .btn-orange:hover { background-color: #ebb563; border-color: #ebb563; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-600 h-screen flex flex-col overflow-hidden">
@@ -153,13 +190,19 @@ let currentRole = 'gov';
 let currentPage = 'dashboard';
 let expandedMenus = new Set();
 let mockData = {};
+let archivePage = 1;
+const PAGE_SIZE = 10;
 
 // ==================== MOCK DATA ====================
 function generateMockData() {
     const companies = ['湖南比亚迪电子有限公司', '长沙晟通科技有限公司', '湖南旺旺食品有限公司', '湖南澳优乳业有限公司', '长沙中信戴卡有限公司', '湖南九典宏阳制药有限公司', '湖南华纳大药厂有限公司', '长沙金驰能源科技有限公司', '湖南永杉锂业有限公司', '长沙利亚德光电有限公司'];
     const projects = ['年产1000万套智能终端生产线建设项目', '新型合金材料研发中心建设项目', '绿色食品加工产业园项目', '医药医疗器械生产基地项目', '先进储能材料产业化项目', '电子信息产业园基础设施建设项目', '智能终端配套产业园项目', '新材料技术研发中心项目'];
-    const categories = ['项目立项', '规划审批', '用地审批', '环评批复', '施工许可', '竣工验收', '消防审查', '档案备案'];
-    const subcategories = ['申请材料', '审批文件', '批复文件', '验收报告', '设计图纸', '检测报告', '合同文件', '会议纪要'];
+    const categoryTree = {
+        '规划资料': ['立项备案', '用地许可', '总图', '规划许可'],
+        '建设资料': ['施工图审查', '施工许可', '其他']
+    };
+    const categories = Object.keys(categoryTree);
+    const subcategories = Object.values(categoryTree).flat();
     const tags = ['重点项目', '招商引资', '政府投资', '企业自筹', 'PPP项目', '高新技术', '节能环保', '产业升级'];
     const users = [
         { name: '张伟', role: '超级管理员', dept: '信息中心' },
@@ -169,25 +212,51 @@ function generateMockData() {
         { name: '刘洋', role: '普通查询员', dept: '行政审批局' }
     ];
 
-    // 档案数据
+    // 档案数据 - 所有项目 x 所有类别全覆盖
     const archives = [];
-    for (let i = 1; i <= 35; i++) {
-        const co = companies[i % companies.length];
-        const proj = projects[i % projects.length];
-        const cat = categories[i % categories.length];
-        const sub = subcategories[i % subcategories.length];
-        const t = tags[i % tags.length];
-        const statuses = ['已归档', '已归档', '已归档', '审核中', '已归档'];
-        const status = statuses[i % statuses.length];
-        archives.push({
-            id: `DA-2026-${String(i).padStart(4, '0')}`,
-            title: `${proj}${['立项申请', '环评报告', '验收资料', '施工图纸', '用地规划'][i % 5]}`,
-            company: co, project: proj, category: cat, subCategory: sub, tags: [t, tags[(i+1) % tags.length]],
-            status: status, uploadTime: `2026-${String((i % 12) + 1).padStart(2, '0')}-${String((i % 28) + 1).padStart(2, '0')}`,
-            uploader: users[i % users.length].name, fileType: ['PDF', 'Word', 'Excel'][i % 3],
-            fileSize: `${(Math.random() * 10 + 0.5).toFixed(1)}MB`, downloads: Math.floor(Math.random() * 50),
-            views: Math.floor(Math.random() * 200)
-        });
+    const subTitles = {
+        '立项备案': ['立项批复文件', '项目可行性研究报告', '项目备案证明', '立项申请表'],
+        '用地许可': ['建设用地规划许可证', '土地使用权证', '用地预审意见', '土地划拨决定书'],
+        '总图': ['总平面布置图', '竖向设计图', '管线综合图', '总图审批意见'],
+        '规划许可': ['建设工程规划许可证', '规划设计方案', '规划条件通知书', '规划核实意见'],
+        '施工图审查': ['施工图审查合格书', '施工图审查报告', '消防设计审查意见', '施工图设计文件'],
+        '施工许可': ['建筑工程施工许可证', '施工合同', '监理合同', '质量安全监督备案表'],
+        '其他': ['竣工验收备案表', '节能评估报告', '环评批复文件', '水土保持方案']
+    };
+    const fileTypes = ['PDF', 'Word', 'Excel', '图片'];
+    let seq = 0;
+    for (let pi = 0; pi < projects.length; pi++) {
+        for (let ci = 0; ci < categories.length; ci++) {
+            const cat = categories[ci];
+            const subs = categoryTree[cat];
+            for (let si = 0; si < subs.length; si++) {
+                const sub = subs[si];
+                const company = companies[pi % companies.length];
+                const titles = subTitles[sub] || ['审批材料', '存档文件', '备案资料'];
+                const count = 2 + (pi * 7 + ci * 4 + si) % 2;
+                for (let k = 0; k < count; k++) {
+                    seq++;
+                    const t = tags[seq % tags.length];
+                    const statuses = ['已归档', '已归档', '已归档', '审核中', '已归档'];
+                    const status = statuses[seq % statuses.length];
+                    const title = titles[k % titles.length] + (k > 1 ? '(' + (k + 1) + ')' : '');
+                    const ft = fileTypes[(pi + ci + k) % fileTypes.length];
+                    archives.push({
+                        id: 'DA-2026-' + String(seq).padStart(4, '0'),
+                        title: title,
+                        company: company, project: projects[pi], category: cat, subCategory: sub,
+                        tags: [t, tags[(seq + 1) % tags.length]],
+                        status: status,
+                        uploadTime: '2026-' + String((seq % 12) + 1).padStart(2, '0') + '-' + String((seq % 28) + 1).padStart(2, '0'),
+                        uploader: users[seq % users.length].name,
+                        fileType: ft,
+                        fileSize: (Math.random() * 10 + 0.5).toFixed(1) + 'MB',
+                        downloads: Math.floor(Math.random() * 50),
+                        views: Math.floor(Math.random() * 200)
+                    });
+                }
+            }
+        }
     }
 
     // 日志数据
@@ -232,7 +301,7 @@ function generateMockData() {
         });
     }
 
-    mockData = { companies, projects, categories, subcategories, tags, users, archives, logs, messages, todos };
+    mockData = { companies, projects, categoryTree, categories, subcategories, tags, users, archives, logs, messages, todos };
 }
 
 // ==================== HELPERS ====================
@@ -281,7 +350,7 @@ function renderSidebar() {
             </div>
             ${hasChildren ? `<div class="overflow-hidden transition-all duration-200" id="sub-${m.id}" style="${isExpanded ? 'max-height:500px' : 'max-height:0'}">
                 ${m.children.map(c => `
-                    <div class="flex items-center gap-2 pl-12 pr-5 py-2 cursor-pointer menu-hover text-xs ${currentPage === c.id ? 'active-submenu font-medium' : ''}"
+                    <div class="flex items-center gap-2 pl-12 pr-5 py-2 cursor-pointer menu-hover text-sm ${currentPage === c.id ? 'active-submenu font-medium' : ''}"
                          onclick="navigate('${c.id}')">
                         <span class="w-1 h-1 rounded-full ${currentPage === c.id ? 'bg-blue-500' : 'bg-gray-300'}"></span>
                         <span>${c.label}</span>
@@ -322,13 +391,18 @@ function switchRole(role) {
 }
 
 // ==================== MODAL ====================
-function openModal(title, bodyHtml) {
+function openModal(title, bodyHtml, width, height) {
     document.getElementById('modal-title').textContent = title;
+    var box = document.querySelector('.modal-box');
+    if (width) box.style.width = width;
+    if (height) box.style.maxHeight = height;
     document.getElementById('modal-body').innerHTML = bodyHtml;
     document.getElementById('global-modal').classList.add('show');
 }
 function closeModal() { document.getElementById('global-modal').classList.remove('show'); }
+/* 点击背景关闭弹窗功能暂时禁用，排查预览弹窗关闭问题
 document.getElementById('global-modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+*/
 
 // ==================== PAGE RENDERERS ====================
 function renderContent() {
@@ -425,7 +499,7 @@ function renderGovDashboard() {
                                 <td class="py-2.5">${statusBadge(t.status)}</td>
                                 <td class="py-2.5">${t.company}</td>
                                 <td class="py-2.5 text-gray-400">${t.time}</td>
-                                <td class="py-2.5 text-center"><button class="text-blue-500 hover:text-blue-700" onclick="openModal('处理事项','<p class=text-sm>请选择处理方式</p><div class=mt-4 flex gap-3><button class=btn-primary onclick=closeModal()>通过</button><button class=btn-default onclick=closeModal()>驳回</button></div>')">处理</button></td>
+                                <td class="py-2.5 text-center"><button class="text-blue-500 hover:text-blue-700" onclick="var wh=Math.min(window.innerHeight*0.78,720);var wd=Math.round(Math.min(wh*1.618,400));openModal('处理事项','<p class=text-sm>请选择处理方式</p><div class=mt-4 style=display:flex;gap:4px><button class=btn-primary style=flex:1 onclick=closeModal()>通过</button><button class=btn-default style=flex:1 onclick=closeModal()>驳回</button><button class=btn-default style=flex:1 onclick=closeModal()>取消</button></div>',wd+'px',wh+'px')">处理</button></td>
                             </tr>`).join('')}
                         </tbody>
                     </table>
@@ -455,8 +529,9 @@ function renderGovDashboard() {
             </div>
         </div>
 
-        <!-- 月度档案上传趋势 -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+        <!-- 月度档案上传趋势 + 最近动态 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 px-4 pt-4 pb-[10px]">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="section-title"><i class="fa-solid fa-chart-bar mr-1"></i>月度档案上传统计</h2>
                 <div class="flex bg-gray-100 rounded overflow-hidden text-xs">
@@ -464,28 +539,32 @@ function renderGovDashboard() {
                     <button class="px-3 py-1 text-gray-600 hover:bg-gray-200">去年</button>
                 </div>
             </div>
-            <div class="flex items-end justify-between h-32 px-2" style="gap:2px">
+            <div class="flex items-end justify-between h-32 px-2" style="gap:4px">
                 ${monthData.map((v, i) => `
-                <div class="flex flex-col items-center flex-1">
-                    <div class="w-full bg-blue-400 rounded-t hover:bg-blue-500 cursor-pointer transition-all" style="height:${v * 4}px;min-height:4px" title="${v}份"></div>
+                <div class="flex flex-col items-center" style="flex:1;max-width:32px">
+                    <div class="w-5 bg-blue-400 rounded-t hover:bg-blue-500 cursor-pointer transition-all" style="height:${v * 4}px;min-height:4px" title="${v}份"></div>
                     <span class="text-[10px] text-gray-400 mt-1">${i+1}月</span>
                 </div>`).join('')}
             </div>
         </div>
 
-        <!-- 最近动态 -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
             <h2 class="section-title mb-4"><i class="fa-solid fa-clock-rotate-left mr-1"></i>最近动态</h2>
             <div class="space-y-2">
-                ${archives.slice(-5).reverse().map(a => `
+                ${archives.slice().sort(function(a,b){return b.uploadTime.localeCompare(a.uploadTime)}).slice(0,5).map(a => {
+                var t = a.uploadTime || '';
+                var formatted = t.replace(/-/g, '.');
+                if (formatted.length <= 10) formatted += ' 00:00';
+                return `
                 <div class="flex items-center gap-3 text-xs py-1.5 border-b border-gray-50 last:border-0">
                     <span class="text-blue-500"><i class="fa-solid fa-upload"></i></span>
                     <span class="text-gray-800">${a.uploader}</span>
                     <span class="text-gray-500">上传了</span>
                     <span class="text-gray-800 font-medium">${a.title}</span>
-                    <span class="text-gray-400">${a.time}</span>
-                </div>`).join('')}
+                    <span class="text-gray-400">${formatted}</span>
+                </div>`}).join('')}
             </div>
+        </div>
         </div>
     </div>`;
 }
@@ -493,6 +572,7 @@ function renderGovDashboard() {
 // 档案查询辅助函数（避免内嵌 HTML 到 onclick 导致引号混乱）
 const withdrawnArchives = new Set();
 const selectedPushArchives = new Set();
+
 function togglePushSelect(id) {
     if (selectedPushArchives.has(id)) selectedPushArchives.delete(id);
     else selectedPushArchives.add(id);
@@ -504,23 +584,18 @@ function toggleSelectAll(checked) {
         else selectedPushArchives.delete(c.value);
     });
 }
-function showBatchPushModal() {
-    const count = selectedPushArchives.size;
-    if (count === 0) { alert('请先勾选需要推送的档案'); return; }
-    const selected = mockData.archives.filter(a => selectedPushArchives.has(a.id));
-    const listHtml = selected.map(a => `<div class="text-xs py-1 border-b border-gray-50">${a.title}（${a.company}）</div>`).join('');
-    openModal('批量推送','<p class="text-sm font-medium mb-2">已选择 <span class="text-blue-500">' + count + '</span> 条档案信息推送：</p><div class="max-h-32 overflow-y-auto bg-gray-50 rounded p-2 mb-3">' + listHtml + '</div><p class="text-sm font-medium mb-2">推送范围：</p><div class="text-xs text-gray-500 mb-3">相关企业：' + [...new Set(selected.map(a => a.company))].join('、') + '</div><div class="pt-3 border-t border-gray-100 flex items-center justify-between"><label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked><span class="text-sm text-gray-600">是否短信推送</span></label><div class="flex gap-2"><button class="btn-primary" onclick="closeModal()">推送</button><button class="btn-default" onclick="closeModal()">取消</button></div></div>');
-}
 function showArchiveDetail(id) {
     const a = mockData.archives.find(x => x.id === id);
-    if (a) openModal('档案详情 - ' + a.title, renderArchiveDetail(a));
+    if (a) openModal('档案详情 - ' + a.title, renderArchiveDetail(a), '582px', null);
 }
 function showPreview(id) {
     const a = mockData.archives.find(x => x.id === id);
-    if (a) openModal('在线预览','<div class="text-center py-8"><i class="fa-regular fa-file-pdf text-5xl text-red-400 mb-3"></i><p class="text-sm">' + a.title + '.pdf</p><p class="text-xs text-gray-400 mt-1">' + a.fileSize + '</p><div class="mt-4"><button class="btn-primary" onclick="closeModal()">在线预览</button></div></div>');
-}
-function showPushModal() {
-    openModal('推送档案','<p class="text-sm">选择推送人员：</p><div class="mt-3 space-y-2"><label class="flex items-center gap-2"><input type="checkbox"><span class="text-sm">张伟(信息中心)</span></label><label class="flex items-center gap-2"><input type="checkbox"><span class="text-sm">李强(规划建设局)</span></label><label class="flex items-center gap-2"><input type="checkbox"><span class="text-sm">王芳(产业发展局)</span></label></div><div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between"><label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked><span class="text-sm text-gray-600">是否短信推送</span></label><button class="btn-primary" onclick="closeModal()">推送</button></div>');
+    if (!a) { alert('未找到档案'); return; }
+    const fileMap = {'PDF': 'demo.pdf', 'Word': 'demo.docx', 'Excel': 'demo.xlsx'};
+    const fileName = fileMap[a.fileType] || 'demo.png';
+    const fileUrl = 'http://host.docker.internal:9000/' + fileName;
+    const kkUrl = 'http://localhost:8012/onlinePreview?url=' + btoa(fileUrl);
+    window.open(kkUrl, '_blank');
 }
 function showWithdrawConfirm(id) {
     openModal('申请撤回','<p class="text-sm">确认撤回该档案的审核申请吗？</p><div class="mt-4 flex gap-2"><button class="btn-primary" onclick="confirmWithdraw(\'' + id + '\')">确认</button><button class="btn-default" onclick="closeModal()">取消</button></div>');
@@ -534,91 +609,137 @@ function showPermApprove() {
     openModal('审批权限申请','<p class="text-sm">审批结果：</p><div class="mt-3 flex gap-3"><button class="btn-primary" onclick="closeModal()">通过</button><button class="btn-default" onclick="closeModal()">驳回</button></div>');
 }
 
+function renderPagination(total, page, onChange) {
+    var totalPages = Math.ceil(total / PAGE_SIZE) || 1;
+    if (totalPages <= 1) return '';
+    var items = [];
+    function addPage(p, label) {
+        items.push('<span class="page-item ' + (p === page ? 'active' : '') + '" onclick="' + onChange + '(' + p + ')">' + (label || p) + '</span>');
+    }
+    function addDots() {
+        items.push('<span class="page-item" style="cursor:default">\u2026</span>');
+    }
+    items.push('<span class="page-item ' + (page <= 1 ? 'opacity-30' : '') + '" onclick="' + (page > 1 ? onChange + '(' + (page - 1) + ')' : '') + '"><i class="fa-solid fa-angle-left"></i></span>');
+    if (totalPages <= 7) {
+        for (var i = 1; i <= totalPages; i++) addPage(i);
+    } else if (page <= 4) {
+        for (var i = 1; i <= 5; i++) addPage(i);
+        addDots();
+        addPage(totalPages);
+    } else if (page >= totalPages - 3) {
+        addPage(1);
+        addDots();
+        for (var i = totalPages - 4; i <= totalPages; i++) addPage(i);
+    } else {
+        addPage(1);
+        addDots();
+        for (var i = page - 1; i <= page + 1; i++) addPage(i);
+        addDots();
+        addPage(totalPages);
+    }
+    items.push('<span class="page-item ' + (page >= totalPages ? 'opacity-30' : '') + '" onclick="' + (page < totalPages ? onChange + '(' + (page + 1) + ')' : '') + '"><i class="fa-solid fa-angle-right"></i></span>');
+    return items.join('');
+}
+
+function goArchivePage(p) {
+    archivePage = p;
+    renderContent();
+}
+
+function updateSubCategories(select) {
+    var catTree = mockData.categoryTree;
+    if (!catTree || !select.value) return;
+    var subs = catTree[select.value] || [];
+    var subSelect = document.getElementById('archive-sub-category');
+    if (subSelect) {
+        subSelect.innerHTML = subs.map(function(s) { return '<option value="' + s + '">' + s + '</option>'; }).join('');
+    }
+}
+
 function renderArchiveSearch() {
-    const { archives, companies, categories, tags } = mockData;
+    const { archives, categories, tags } = mockData;
+    var totalPages = Math.ceil(archives.length / PAGE_SIZE) || 1;
+    if (archivePage > totalPages) archivePage = totalPages;
+    var start = (archivePage - 1) * PAGE_SIZE;
+    var end = Math.min(start + PAGE_SIZE, archives.length);
+    var pageData = archives.slice(start, end);
     return `
     <div class="space-y-4">
-        <h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-search mr-1.5 text-blue-500"></i>档案查询</h2>
-        <!-- 搜索栏 -->
+        <h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-search mr-1.5 text-blue-500"></i>\u6863\u6848\u67e5\u8be2</h2>
+        <!-- \u641c\u7d22\u680f -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
-                <div><label class="text-xs text-gray-500 block mb-1">企业名称</label><input class="form-input text-sm" placeholder="请输入企业名称"></div>
-                <div><label class="text-xs text-gray-500 block mb-1">项目名称</label><input class="form-input text-sm" placeholder="请输入项目名称"></div>
-                <div><label class="text-xs text-gray-500 block mb-1">文件名称</label><input class="form-input text-sm" placeholder="请输入文件名称"></div>
-                <div><label class="text-xs text-gray-500 block mb-1">档案分类</label>
-                    <select class="form-select text-sm"><option value="">全部</option>${categories.map(c => `<option>${c}</option>`).join('')}</select>
+                <div><label class="text-xs text-gray-500 block mb-1">\u4f01\u4e1a\u540d\u79f0</label><input class="form-input text-sm" placeholder="\u8bf7\u8f93\u5165\u4f01\u4e1a\u540d\u79f0"></div>
+                <div><label class="text-xs text-gray-500 block mb-1">\u9879\u76ee\u540d\u79f0</label><input class="form-input text-sm" placeholder="\u8bf7\u8f93\u5165\u9879\u76ee\u540d\u79f0"></div>
+                <div><label class="text-xs text-gray-500 block mb-1">\u6587\u4ef6\u540d\u79f0</label><input class="form-input text-sm" placeholder="\u8bf7\u8f93\u5165\u6587\u4ef6\u540d\u79f0"></div>
+                <div><label class="text-xs text-gray-500 block mb-1">\u6863\u6848\u5206\u7c7b</label>
+                    <select class="form-select text-sm"><option value="">\u5168\u90e8</option>${categories.map(c => `<option>${c}</option>`).join('')}</select>
                 </div>
-                <div><label class="text-xs text-gray-500 block mb-1">档案标签</label>
-                    <select class="form-select text-sm"><option value="">全部</option>${tags.map(t => `<option>${t}</option>`).join('')}</select>
+                <div><label class="text-xs text-gray-500 block mb-1">\u6863\u6848\u6807\u7b7e</label>
+                    <select class="form-select text-sm"><option value="">\u5168\u90e8</option>${tags.map(t => `<option>${t}</option>`).join('')}</select>
                 </div>
-                <div><label class="text-xs text-gray-500 block mb-1">关键字</label><input class="form-input text-sm" placeholder="全文检索（标题/正文）"></div>
-                <div><label class="text-xs text-gray-500 block mb-1">状态</label>
-                    <select class="form-select text-sm"><option>全部</option><option>已归档</option><option>审核中</option></select>
+                <div><label class="text-xs text-gray-500 block mb-1">\u5173\u952e\u5b57</label><input class="form-input text-sm" placeholder="\u5168\u6587\u68c0\u7d22\uff08\u6807\u9898/\u6b63\u6587\uff09"></div>
+                <div><label class="text-xs text-gray-500 block mb-1">\u72b6\u6001</label>
+                    <select class="form-select text-sm"><option>\u5168\u90e8</option><option>\u5df2\u5f52\u6863</option><option>\u5ba1\u6838\u4e2d</option></select>
                 </div>
                 <div class="flex items-end gap-2">
-                    <button class="btn-primary flex-1"><i class="fa-solid fa-search mr-1"></i>查询</button>
+                    <button class="btn-primary flex-1"><i class="fa-solid fa-search mr-1"></i>\u67e5\u8be2</button>
                     <button class="btn-default"><i class="fa-solid fa-rotate-left"></i></button>
                 </div>
             </div>
         </div>
 
-        <!-- 搜索结果 -->
+        <!-- \u641c\u7d22\u7ed3\u679c -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-100">
             <div class="p-4 border-b border-gray-100 flex justify-between items-center">
-                <span class="text-sm font-medium text-gray-700">查询结果 <span class="text-blue-500">${archives.length}</span> 条</span>
+                <span class="text-sm font-medium text-gray-700">\u67e5\u8be2\u7ed3\u679c <span class="text-blue-500">${archives.length}</span> \u6761</span>
                 <div class="flex gap-2">
-                    <button class="btn-default text-xs py-1 px-3" onclick="showBatchPushModal()"><i class="fa-regular fa-paper-plane mr-1"></i>推送</button>
-                    <button class="btn-default text-xs py-1 px-3"><i class="fa-solid fa-download mr-1"></i>导出</button>
+                    <button class="btn-default text-xs py-1 px-3" onclick="showBatchPushModal()"><i class="fa-regular fa-paper-plane mr-1"></i>\u63a8\u9001</button>
+                    <button class="btn-default text-xs py-1 px-3"><i class="fa-solid fa-download mr-1"></i>\u5bfc\u51fa</button>
                 </div>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-xs">
                     <thead><tr class="text-gray-500 border-b border-gray-100 bg-gray-50/50">
                         <th class="w-8 px-2 py-2.5"><input type="checkbox" onchange="toggleSelectAll(this.checked)"></th>
-                        <th class="text-left px-4 py-2.5 font-medium">档案编号</th>
-                        <th class="text-left px-4 py-2.5 font-medium">文件名称</th>
-                        <th class="text-left px-4 py-2.5 font-medium">企业</th>
-                        <th class="text-left px-4 py-2.5 font-medium">项目</th>
-                        <th class="text-left px-4 py-2.5 font-medium">分类</th>
-                        <th class="text-left px-4 py-2.5 font-medium">状态</th>
-                        <th class="text-left px-4 py-2.5 font-medium">上传人</th>
-                        <th class="text-left px-4 py-2.5 font-medium">上传时间</th>
-                        <th class="text-center px-4 py-2.5 font-medium">操作</th>
+                        <th class="text-left px-4 py-2.5 font-medium">\u6863\u6848\u7f16\u53f7</th>
+                        <th class="text-left px-4 py-2.5 font-medium">\u6587\u4ef6\u540d\u79f0</th>
+                        <th class="text-left px-4 py-2.5 font-medium">\u4f01\u4e1a</th>
+                        <th class="text-left px-4 py-2.5 font-medium">\u9879\u76ee</th>
+                        <th class="text-left px-4 py-2.5 font-medium">\u5206\u7c7b</th>
+                        <th class="text-left px-4 py-2.5 font-medium">\u72b6\u6001</th>
+                        <th class="text-left px-4 py-2.5 font-medium">\u4e0a\u4f20\u4eba</th>
+                        <th class="text-left px-4 py-2.5 font-medium">\u4e0a\u4f20\u65f6\u95f4</th>
+                        <th class="text-center px-4 py-2.5 font-medium">\u64cd\u4f5c</th>
                     </tr></thead>
                     <tbody>
-                        ${archives.slice(0, 10).map(a => `
+                        ${pageData.map(a => `
                         <tr class="border-b border-gray-50 hover:bg-gray-50 cursor-pointer" onclick="showArchiveDetail('${a.id}')">
                             <td class="px-2 py-2.5 text-center"><input type="checkbox" class="push-check" value="${a.id}" onclick="event.stopPropagation();togglePushSelect('${a.id}')"></td>
                             <td class="px-4 py-2.5 text-blue-500">${a.id}</td>
                             <td class="px-4 py-2.5 font-medium text-gray-800">${a.title}</td>
                             <td class="px-4 py-2.5">${a.company}</td>
-                            <td class="px-4 py-2.5 max-w-[160px] truncate" title="${a.project}">${a.project}</td>
+                            <td class="px-4 py-2.5 max-w-[160px] truncate"><a class="text-blue-500 hover:text-blue-700 cursor-pointer hover:underline" onclick="event.stopPropagation();showProjectArchives('${a.project}')">${a.project}</a></td>
                             <td class="px-4 py-2.5">${a.category}/${a.subCategory}</td>
                             <td class="px-4 py-2.5">${statusBadge(a.status)}</td>
                             <td class="px-4 py-2.5">${a.uploader}</td>
                             <td class="px-4 py-2.5 text-gray-400">${a.uploadTime}</td>
                             <td class="px-4 py-2.5 text-center">
                                 <div class="flex items-center justify-center gap-1.5">
-                                    <button class="text-blue-500 hover:text-blue-700 text-xs" title="预览" onclick="event.stopPropagation();showPreview('${a.id}')"><i class="fa-regular fa-eye"></i></button>
-                                    <button class="text-green-500 hover:text-green-700 text-xs" title="下载" onclick="event.stopPropagation();alert('模拟：开始下载 ${a.title}')"><i class="fa-solid fa-download"></i></button>
-                                    <button class="text-orange-500 hover:text-orange-700 text-xs" title="推送" onclick="event.stopPropagation();showPushModal()"><i class="fa-regular fa-paper-plane"></i></button>
+                                    <button class="text-blue-500 hover:text-blue-700 text-xs" title="\u9884\u89c8" onclick="event.stopPropagation();showPreview('${a.id}')"><i class="fa-regular fa-eye"></i></button>
+                                    <button class="text-green-500 hover:text-green-700 text-xs" title="\u4e0b\u8f7d" onclick="event.stopPropagation();alert('\u6a21\u62df\uff1a\u5f00\u59cb\u4e0b\u8f7d ${a.title}')"><i class="fa-solid fa-download"></i></button>
+                                    <button class="text-orange-500 hover:text-orange-700 text-xs" title="\u63a8\u9001" onclick="event.stopPropagation();showPushModal('${a.id}')"><i class="fa-regular fa-paper-plane"></i></button>
                                 </div>
                             </td>
                         </tr>`).join('')}
                     </tbody>
                 </table>
             </div>
-            <!-- 分页 -->
+            <!-- \u5206\u9875 -->
             <div class="flex justify-between items-center px-4 py-3 border-t border-gray-100">
-                <span class="text-xs text-gray-400">显示 1-10 条，共 ${archives.length} 条</span>
+                <span class="text-xs text-gray-400">\u663e\u793a ${start+1}-${end} \u6761\uff0c\u5171 ${archives.length} \u6761</span>
                 <div class="flex items-center gap-1">
-                    <span class="page-item"><i class="fa-solid fa-angle-left"></i></span>
-                    <span class="page-item active">1</span>
-                    <span class="page-item">2</span>
-                    <span class="page-item">3</span>
-                    <span class="page-item">4</span>
-                    <span class="page-item"><i class="fa-solid fa-ellipsis-h"></i></span>
-                    <span class="page-item"><i class="fa-solid fa-angle-right"></i></span>
+                    ${renderPagination(archives.length, archivePage, 'goArchivePage')}
                 </div>
             </div>
         </div>
@@ -640,9 +761,9 @@ function renderArchiveDetail(a) {
 <div><span class="text-gray-400">状态：</span>${statusBadge(a.status)}</div>\
 <div><span class="text-gray-400">下载次数：</span><span>${a.downloads} 次</span></div></div>\
 <div class="mt-4 pt-4 border-t border-gray-100 flex gap-4">\
-<button class="btn-primary" onclick="closeModal()"><i class="fa-regular fa-eye mr-1"></i>在线预览</button>\
-<button class="btn-default" onclick="closeModal()"><i class="fa-solid fa-download mr-1"></i>下载</button>\
-<button class="btn-default" onclick="closeModal()"><i class="fa-regular fa-paper-plane mr-1"></i>推送</button></div></div>`;
+<a href="javascript:void(0)" onclick="window.open('http://localhost:8012/onlinePreview?url='+btoa('http://host.docker.internal:9000/'+({'PDF':'demo.pdf','Word':'demo.docx','Excel':'demo.xlsx'})['${a.fileType}']||'demo.png'),'_blank')" class="btn-primary"><i class="fa-regular fa-eye mr-1"></i>在线预览</a>\
+<button class="btn-default" onclick="alert('模拟：开始下载 ${a.title}')"><i class="fa-solid fa-download mr-1"></i>下载</button>\
+<button class="btn-default" onclick="closeModal();showPushModal('${a.id}')"><i class="fa-regular fa-paper-plane mr-1"></i>推送</button></div></div>`;
 }
 
 function renderArchiveNew() {
@@ -661,10 +782,10 @@ function renderArchiveNew() {
                     <datalist id="project-list">${projects.map(p => `<option value="${p}">`).join('')}</datalist>
                 </div>
                 <div><label class="text-xs text-gray-500 block mb-1">一级分类 <span class="text-red-500">*</span></label>
-                    <select class="form-select text-sm"><option>项目立项</option><option>规划审批</option><option>用地审批</option><option>环评批复</option><option>施工许可</option><option>竣工验收</option></select>
+                    <select class="form-select text-sm" id="archive-category" onchange="updateSubCategories(this)">${Object.keys(mockData.categoryTree).map(function(c,i){return '<option value="'+c+'"'+(i===0?' selected':'')+'>'+c+'</option>';}).join('')}</select>
                 </div>
                 <div><label class="text-xs text-gray-500 block mb-1">二级分类 <span class="text-red-500">*</span></label>
-                    <select class="form-select text-sm"><option>申请材料</option><option>审批文件</option><option>批复文件</option><option>验收报告</option><option>设计图纸</option></select>
+                    <select class="form-select text-sm" id="archive-sub-category">${(function(){var first=Object.keys(mockData.categoryTree)[0];return (mockData.categoryTree[first]||[]).map(function(s){return '<option value="'+s+'">'+s+'</option>';}).join('');})()}</select>
                 </div>
                 <div><label class="text-xs text-gray-500 block mb-1">档案标签</label>
                     <div class="flex flex-wrap gap-1.5">${['重点项目','政府投资','高新技术','节能环保'].map(t => `<label class="flex items-center gap-1 text-xs bg-gray-50 px-2 py-1 rounded cursor-pointer hover:bg-blue-50"><input type=checkbox> ${t}</label>`).join('')}</div>
@@ -816,33 +937,33 @@ function renderSysArchivePerm() {
 }
 
 function renderSysCategory() {
-    const cats = [
-        { id: 1, name: '项目立项', subs: ['申请材料', '审批文件', '批复文件'] },
-        { id: 2, name: '规划审批', subs: ['规划方案', '审批意见', '许可证'] },
-        { id: 3, name: '用地审批', subs: ['用地申请', '审批文件', '不动产权证'] },
-        { id: 4, name: '环评批复', subs: ['环评报告', '批复文件', '监测数据'] },
-        { id: 5, name: '施工许可', subs: ['施工申请', '许可证', '验收报告'] },
-        { id: 6, name: '竣工验收', subs: ['验收资料', '验收报告', '备案文件'] }
-    ];
-    return `
-    <div class="space-y-4">
-        <h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-folder-tree mr-1.5 text-blue-500"></i>档案分类管理</h2>
-        <div class="flex justify-end mb-2"><button class="btn-primary text-xs"><i class="fa-solid fa-plus mr-1"></i>新增分类</button></div>
-        <div class="bg-white rounded-lg shadow-sm border border-gray-100">
-            <table class="w-full text-xs">
-                <thead><tr class="text-gray-500 border-b border-gray-100 bg-gray-50/50"><th class="text-left px-4 py-2.5 font-medium">一级分类</th><th class="text-left px-4 py-2.5 font-medium">二级分类</th><th class="text-left px-4 py-2.5 font-medium">关联档案数</th><th class="text-left px-4 py-2.5 font-medium">排序</th><th class="text-center px-4 py-2.5 font-medium">操作</th></tr></thead>
-                <tbody>${cats.map(c => `
-                    <tr class="border-b border-gray-50"><td class="px-4 py-3 font-medium text-gray-800" rowspan="${c.subs.length}">${c.name}</td>
-                        <td class="px-4 py-2">${c.subs[0]}</td><td class="px-4 py-2">${Math.floor(Math.random() * 20 + 3)}</td><td class="px-4 py-2">${c.id}</td>
-                        <td class="px-4 py-2 text-center" rowspan="${c.subs.length}">
-                            <button class="text-blue-500 hover:text-blue-700 text-xs mr-2" onclick="openModal('编辑分类','<div class=space-y-3><div><label class=text-xs text-gray-500>分类名称</label><input class=form-input value=\\'${c.name}\\'></div><div><label class=text-xs text-gray-500>排序</label><input class=form-input value=\\'${c.id}\\' type=number></div></div><div class=mt-4><button class=btn-primary onclick=closeModal()>保存</button></div>')">编辑</button>
-                            <button class="text-red-400 hover:text-red-600 text-xs" onclick="if(confirm('确认删除？'))alert('已删除')">删除</button>
-                        </td>
-                    </tr>${c.subs.slice(1).map(s => `<tr class="border-b border-gray-50"><td class="px-4 py-2">${s}</td><td class="px-4 py-2">${Math.floor(Math.random() * 15 + 1)}</td><td class="px-4 py-2">${c.id}${c.subs.indexOf(s) + 1}</td></tr>`).join('')}`).join('')}
-                </tbody>
-            </table>
-        </div>
-    </div>`;
+    var catTree = mockData.categoryTree;
+    if (!catTree) return '<div class="space-y-4"><h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-folder-tree mr-1.5 text-blue-500"></i>\u6863\u6848\u5206\u7c7b\u7ba1\u7406</h2><p class="text-xs text-gray-400">\u5206\u7c7b\u6570\u636e\u672a\u52a0\u8f7d</p></div>';
+    var html = '<div class="space-y-4"><h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-folder-tree mr-1.5 text-blue-500"></i>\u6863\u6848\u5206\u7c7b\u7ba1\u7406</h2><div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4"><table class="w-full text-xs"><thead><tr class="text-gray-500 border-b border-gray-100"><th class="text-left py-2 font-medium w-16">\u5e8f\u53f7</th><th class="text-left py-2 font-medium">\u4e00\u7ea7\u5206\u7c7b</th><th class="text-left py-2 font-medium">\u4e8c\u7ea7\u5206\u7c7b</th><th class="text-center py-2 font-medium" style="width:80px">\u6863\u6848\u6570</th><th class="text-center py-2 font-medium" style="width:100px">\u64cd\u4f5c</th></tr></thead><tbody>';
+    var seq = 0;
+    var cats = Object.keys(catTree);
+    for (var ci = 0; ci < cats.length; ci++) {
+        var cat = cats[ci];
+        var subs = catTree[cat];
+        var rowCount = subs.length;
+        for (var si = 0; si < rowCount; si++) {
+            seq++;
+            var sub = subs[si];
+            var count = mockData.archives ? mockData.archives.filter(function(a) { return a.subCategory === sub; }).length : 0;
+            html += '<tr class="border-b border-gray-50 hover:bg-gray-50">';
+            html += '<td class="py-2 text-gray-400">' + seq + '</td>';
+            if (si === 0) {
+                html += '<td class="py-2 font-medium" rowspan="' + rowCount + '">' + cat + '</td>';
+            }
+            html += '<td class="py-2 text-gray-600">' + sub + '</td>';
+            html += '<td class="py-2 text-center text-blue-500">' + count + '</td>';
+            html += '<td class="py-2 text-center"><button class="text-blue-500 hover:text-blue-700 text-xs mr-2" onclick="alert(\'\u7f16\u8f91\u5206\u7c7b\uff1a' + sub + '\')"><i class="fa-solid fa-pen"></i></button><button class="text-red-400 hover:text-red-600 text-xs" onclick="alert(\'\u5220\u9664\u5206\u7c7b\uff1a' + sub + '\')"><i class="fa-solid fa-trash"></i></button></td>';
+            html += '</tr>';
+        }
+    }
+    html += '</tbody></table></div>';
+    html += '<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4"><h3 class="text-sm font-medium text-gray-700 mb-3"><i class="fa-solid fa-plus-circle mr-1 text-blue-500"></i>\u65b0\u589e\u5206\u7c7b</h3><div class="grid grid-cols-1 md:grid-cols-3 gap-3"><div><label class="text-xs text-gray-500 block mb-1">\u4e00\u7ea7\u5206\u7c7b</label><input class="form-input text-sm" placeholder="\u5982\uff1a\u89c4\u5212\u8d44\u6599"></div><div><label class="text-xs text-gray-500 block mb-1">\u4e8c\u7ea7\u5206\u7c7b</label><input class="form-input text-sm" placeholder="\u5982\uff1a\u7acb\u9879\u5907\u6848"></div><div class="flex items-end"><button class="btn-primary"><i class="fa-solid fa-plus mr-1"></i>\u6dfb\u52a0</button></div></div></div></div>';
+    return html;
 }
 
 function renderSysTag() {
@@ -1013,7 +1134,7 @@ function renderEntArchiveList() {
                             <td class="px-4 py-2.5 text-gray-400">${a.uploadTime}</td>
                             <td class="px-4 py-2.5 text-center">
                                 <div class="flex items-center justify-center gap-1.5">
-                                    <button class="text-blue-500 hover:text-blue-700 text-xs" onclick="openModal('在线预览','<div class=text-center py-8><i class=\\'fa-regular fa-file-pdf text-5xl text-red-400 mb-3\\'></i><p class=text-sm>${a.title}.pdf</p><p class=text-xs text-gray-400 mt-1>${a.fileSize}</p><div class=mt-4><button class=btn-primary>在线预览</button></div></div>')"><i class="fa-regular fa-eye"></i></button>
+                                    <button class="text-blue-500 hover:text-blue-700 text-xs" onclick="showPreview('${a.id}')"><i class="fa-regular fa-eye"></i></button>
                                     <button class="text-green-500 hover:text-green-700 text-xs" onclick="alert('模拟：开始下载 ${a.title}')"><i class="fa-solid fa-download"></i></button>
                                     ${a.status === '审核中' ? (withdrawnArchives.has(a.id) ? '<span class="text-gray-400 text-xs">已申请撤回</span>' : `<button class="text-orange-500 hover:text-orange-700 text-xs" onclick="event.stopPropagation();showWithdrawConfirm('${a.id}')"><i class="fa-solid fa-rotate-left"></i>申请撤回</button>`) : ''}
                                 </div>
@@ -1129,5 +1250,7 @@ generateMockData();
 renderSidebar();
 renderContent();
 </script>
+<script src="js/push-dialog.js"></script>
+<script src="js/project-archives.js"></script>
 </body>
 </html>

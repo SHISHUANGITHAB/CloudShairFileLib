@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>望城经开区 - 项目审批云端共享档案库平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; }
+        .header-bg { background: linear-gradient(90deg, #5ba3f5 0%, #2b7de9 100%); }
+        .sidebar-bg { background-color: #ffffff; }
+        .active-menu { background-color: #eef6ff; color: #1890ff; border-right: 3px solid #1890ff; }
+        .active-submenu { background-color: #f0f5ff; color: #1890ff; }
+        .menu-hover:hover { background-color: #fafafa; color: #1890ff; }
+        .card-blue { background: linear-gradient(135deg, #69c0ff, #40a9ff); }
+        .card-green { background: linear-gradient(135deg, #b5f5ec, #5cdbd3); }
+        .card-orange { background: linear-gradient(135deg, #ffd591, #ffa940); }
+        .card-purple { background: linear-gradient(135deg, #d3adf7, #9254de); }
+        .card-red { background: linear-gradient(135deg, #ffccc7, #ff7875); }
+        .card-cyan { background: linear-gradient(135deg, #87e8de, #36cfc9); }
+        .wave-bg {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 30px; opacity: 0.3;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z' fill='%23ffffff'/%3E%3C/svg%3E");
+            background-size: cover;
+        }
+        .role-tag-active { background: #1890ff; color: white; }
+        .role-tag-inactive { background: #f0f0f0; color: #999; cursor: pointer; }
+        .role-tag-inactive:hover { background: #e6f7ff; color: #1890ff; }
+        .table-header { background-color: #fafafa; }
+        .badge-pending { background: #fff7e6; color: #fa8c16; border: 1px solid #ffd591; }
+        .badge-success { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+        .badge-error { background: #fff2f0; color: #ff4d4f; border: 1px solid #ffccc7; }
+        .badge-processing { background: #e6f7ff; color: #1890ff; border: 1px solid #91d5ff; }
+        .page-item { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+        .page-item:hover { background: #e6f7ff; color: #1890ff; }
+        .page-item.active { background: #1890ff; color: white; }
+        .section-title { color: #1890ff; border-bottom: 2px solid #1890ff; display: inline-block; padding-bottom: 4px; font-size: 15px; font-weight: 700; }
+        .tree-node { transition: all 0.2s; }
+        .tree-node:hover { background: #f0f5ff; }
+        .tab-active { border-bottom: 2px solid #1890ff; color: #1890ff; font-weight: 600; }
+        .tab-inactive { color: #666; cursor: pointer; border-bottom: 2px solid transparent; }
+        .tab-inactive:hover { color: #1890ff; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.45); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-overlay.show { display: flex; }
+        .modal-box { background: white; border-radius: 8px; width: 640px; max-height: 80vh; overflow-y: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+        .form-input { border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 11px; font-size: 14px; width: 100%; outline: none; }
+        .form-input:focus { border-color: #40a9ff; box-shadow: 0 0 0 2px rgba(24,144,255,0.2); }
+        .form-select { border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 11px; font-size: 14px; width: 100%; outline: none; background: white; }
+        .btn-primary { background: #1890ff; color: white; border: none; border-radius: 4px; padding: 6px 16px; cursor: pointer; font-size: 14px; }
+        .btn-primary:hover { background: #40a9ff; }
+        .btn-default { background: white; color: #333; border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 16px; cursor: pointer; font-size: 14px; }
+        .btn-default:hover { color: #1890ff; border-color: #1890ff; }
+        .notif-dot { width: 6px; height: 6px; background: #ff4d4f; border-radius: 50%; display: inline-block; }
+        .mock-chart-bar { height: 120px; display: flex; align-items: flex-end; gap: 8px; padding: 10px 0; }
+        .mock-chart-bar .bar { width: 24px; border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.3s; }
+        .fade-in { animation: fadeIn 0.25s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #d9d9d9; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #bfbfbf; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-600 h-screen flex flex-col overflow-hidden">
+
+<!-- ==================== HEADER ==================== -->
+<header class="header-bg h-14 flex items-center justify-between px-6 text-white shadow-md z-10 shrink-0">
+    <div class="flex items-center gap-3">
+        <i class="fa-solid fa-folder-open text-xl opacity-80"></i>
+        <div>
+            <h1 class="text-sm font-bold tracking-wide">国家级望城经济技术开发区</h1>
+            <p class="text-[10px] opacity-80">项目审批云端共享档案库平台</p>
+        </div>
+    </div>
+    <div class="flex items-center gap-4 text-xs">
+        <!-- 角色切换 -->
+        <div class="flex bg-white/15 rounded-md overflow-hidden text-sm">
+            <button onclick="switchRole('gov')" id="role-gov" class="role-tag-active px-4 py-1.5 text-xs font-medium transition">政府端</button>
+            <button onclick="switchRole('ent')" id="role-ent" class="role-tag-inactive px-4 py-1.5 text-xs font-medium transition">企业端</button>
+        </div>
+        <div class="flex items-center gap-2 cursor-pointer hover:opacity-80">
+            <div class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-xs"><i class="fa-solid fa-user"></i></div>
+            <span id="header-user-name">您好，系统管理员</span>
+        </div>
+        <button class="border border-white/50 px-2.5 py-1 rounded hover:bg-white/10 transition text-xs">退出</button>
+    </div>
+</header>
+
+<div class="flex flex-1 overflow-hidden">
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="w-52 sidebar-bg border-r border-gray-200 flex flex-col overflow-y-auto shrink-0">
+        <ul class="py-2 space-y-0.5 text-sm" id="sidebar-menu">
+            <!-- 由 JS 动态渲染 -->
+        </ul>
+    </aside>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="flex-1 overflow-y-auto p-5 bg-gray-50" id="main-content">
+        <!-- 由 JS 动态渲染 -->
+    </main>
+</div>
+
+<!-- ==================== 全局模态框 ==================== -->
+<div class="modal-overlay" id="global-modal">
+    <div class="modal-box p-0">
+        <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+            <h3 class="text-base font-bold text-gray-800" id="modal-title">标题</h3>
+            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 text-lg">&times;</button>
+        </div>
+        <div class="px-6 py-4" id="modal-body"></div>
+    </div>
+</div>
+
+<script>
+// ==================== DATA ====================
+const govData = {
+    menus: [
+        { id: 'dashboard', icon: 'fa-border-all', label: '首页' },
+        { id: 'archive', icon: 'fa-folder-open', label: '档案管理', children: [
+            { id: 'archive-search', label: '档案查询' },
+            { id: 'archive-new', label: '新增档案' }
+        ]},
+        { id: 'system', icon: 'fa-gear', label: '系统管理', children: [
+            { id: 'sys-perm-apply', label: '权限申请' },
+            { id: 'sys-ent-perm', label: '企业权限管理' },
+            { id: 'sys-user-perm', label: '用户权限管理' },
+            { id: 'sys-archive-perm', label: '档案权限管理' },
+            { id: 'sys-category', label: '档案分类管理' },
+            { id: 'sys-tag', label: '档案标签管理' }
+        ]},
+        { id: 'log', icon: 'fa-list', label: '日志管理', children: [
+            { id: 'log-query', label: '日志查询' },
+            { id: 'log-export', label: '日志导出' }
+        ]}
+    ]
+};
+
+const entData = {
+    menus: [
+        { id: 'ent-dashboard', icon: 'fa-border-all', label: '首页' },
+        { id: 'ent-archive', icon: 'fa-folder-open', label: '档案库', children: [
+            { id: 'ent-archive-list', label: '档案列表' },
+            { id: 'ent-archive-upload', label: '档案上传' }
+        ]},
+        { id: 'ent-message', icon: 'fa-bell', label: '消息通知' },
+        { id: 'ent-log', icon: 'fa-list', label: '日志查看' }
+    ]
+};
+
+// ==================== STATE ====================
+let currentRole = 'gov';
+let currentPage = 'dashboard';
+let expandedMenus = new Set();
+let mockData = {};
+
+// ==================== MOCK DATA ====================
+function generateMockData() {
+    const companies = ['湖南比亚迪电子有限公司', '长沙晟通科技有限公司', '湖南旺旺食品有限公司', '湖南澳优乳业有限公司', '长沙中信戴卡有限公司', '湖南九典宏阳制药有限公司', '湖南华纳大药厂有限公司', '长沙金驰能源科技有限公司', '湖南永杉锂业有限公司', '长沙利亚德光电有限公司'];
+    const projects = ['年产1000万套智能终端生产线建设项目', '新型合金材料研发中心建设项目', '绿色食品加工产业园项目', '医药医疗器械生产基地项目', '先进储能材料产业化项目', '电子信息产业园基础设施建设项目', '智能终端配套产业园项目', '新材料技术研发中心项目'];
+    const categories = ['项目立项', '规划审批', '用地审批', '环评批复', '施工许可', '竣工验收', '消防审查', '档案备案'];
+    const subcategories = ['申请材料', '审批文件', '批复文件', '验收报告', '设计图纸', '检测报告', '合同文件', '会议纪要'];
+    const tags = ['重点项目', '招商引资', '政府投资', '企业自筹', 'PPP项目', '高新技术', '节能环保', '产业升级'];
+    const users = [
+        { name: '张伟', role: '超级管理员', dept: '信息中心' },
+        { name: '李强', role: '档案管理员', dept: '规划建设局' },
+        { name: '王芳', role: '档案管理员', dept: '产业发展局' },
+        { name: '赵明', role: '普通查询员', dept: '招商合作局' },
+        { name: '刘洋', role: '普通查询员', dept: '行政审批局' }
+    ];
+
+    // 档案数据
+    const archives = [];
+    for (let i = 1; i <= 35; i++) {
+        const co = companies[i % companies.length];
+        const proj = projects[i % projects.length];
+        const cat = categories[i % categories.length];
+        const sub = subcategories[i % subcategories.length];
+        const t = tags[i % tags.length];
+        const statuses = ['已归档', '已归档', '已归档', '审核中', '已归档'];
+        const status = statuses[i % statuses.length];
+        archives.push({
+            id: `DA-2026-${String(i).padStart(4, '0')}`,
+            title: `${proj}${['立项申请', '环评报告', '验收资料', '施工图纸', '用地规划'][i % 5]}`,
+            company: co, project: proj, category: cat, subCategory: sub, tags: [t, tags[(i+1) % tags.length]],
+            status: status, uploadTime: `2026-${String((i % 12) + 1).padStart(2, '0')}-${String((i % 28) + 1).padStart(2, '0')}`,
+            uploader: users[i % users.length].name, fileType: ['PDF', 'Word', 'Excel'][i % 3],
+            fileSize: `${(Math.random() * 10 + 0.5).toFixed(1)}MB`, downloads: Math.floor(Math.random() * 50),
+            views: Math.floor(Math.random() * 200)
+        });
+    }
+
+    // 日志数据
+    const logs = [];
+    for (let i = 1; i <= 30; i++) {
+        const actions = ['登录系统', '查询档案', '上传档案', '下载档案', '修改档案', '删除档案', '申请权限', '审批权限', '导出日志', '推送档案'];
+        const results = ['成功', '成功', '成功', '成功', '成功', '成功', '成功', '失败', '成功', '成功'];
+        const u = users[i % users.length];
+        logs.push({
+            time: `2026-06-${String((i % 30) + 1).padStart(2, '0')} ${String(8 + (i % 8)).padStart(2, '0')}:${String((i * 3) % 60).padStart(2, '0')}`,
+            user: u.name, role: u.role, dept: u.dept,
+            action: actions[i % actions.length], result: results[i % results.length],
+            detail: `执行了${actions[i % actions.length]}操作`
+        });
+    }
+
+    // 推送消息
+    const messages = [];
+    for (let i = 1; i <= 8; i++) {
+        const types = ['审核通知', '权限通知', '推送通知'];
+        const t = types[i % types.length];
+        const ar = archives[(i * 3) % archives.length];
+        messages.push({
+            title: t === '审核通知' ? `【审核通知】${ar.title}已${i % 2 === 0 ? '通过' : '退回'}` :
+                    t === '权限通知' ? `【权限通知】${['张伟', '李强'][i % 2]}${i % 2 === 0 ? '已审批' : '提交了'}权限申请` :
+                    `【推送通知】${['张伟', '李强'][i % 2]}向您推送了档案`,
+            type: t, time: `2026-06-${String((i % 28) + 1).padStart(2, '0')} ${String(8 + (i % 8)).padStart(2, '0')}:${String((i * 7) % 60).padStart(2, '0')}`,
+            read: i > 3
+        });
+    }
+
+    // 待办
+    const todos = [];
+    for (let i = 1; i <= 5; i++) {
+        const ar = archives[(i * 5) % archives.length];
+        todos.push({
+            title: ar ? `${ar.title} - 权限审批` : `待处理事项${i}`,
+            type: ['权限审批', '档案审核', '推送确认'][i % 3],
+            status: ['待处理', '处理中', '待处理'][i % 3],
+            company: ar ? ar.company : '—',
+            time: `2026-06-${String((i % 28) + 1).padStart(2, '0')} ${String(8 + (i % 8)).padStart(2, '0')}:${String((i * 11) % 60).padStart(2, '0')}`
+        });
+    }
+
+    mockData = { companies, projects, categories, subcategories, tags, users, archives, logs, messages, todos };
+}
+
+// ==================== HELPERS ====================
+function t(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function formatDate(d) {
+    const parts = d.split('-');
+    if (parts.length === 3) return `${parts[0]}年${parseInt(parts[1])}月${parseInt(parts[2])}日`;
+    return d;
+}
+
+function statusBadge(status) {
+    const map = {
+        '已归档': 'badge-success', '审核中': 'badge-pending', '待审核': 'badge-processing',
+        '已退回': 'badge-error', '待处理': 'badge-pending', '处理中': 'badge-processing',
+        '成功': 'badge-success', '失败': 'badge-error'
+    };
+    const cls = map[status] || 'badge-pending';
+    return `<span class="${cls} text-xs px-2 py-0.5 rounded">${status}</span>`;
+}
+
+// ==================== RENDER ====================
+function renderSidebar() {
+    const data = currentRole === 'gov' ? govData : entData;
+    const ul = document.getElementById('sidebar-menu');
+    ul.innerHTML = '';
+    data.menus.forEach(m => {
+        const hasChildren = m.children && m.children.length > 0;
+        const isActive = currentPage === m.id || (hasChildren && m.children.some(c => c.id === currentPage));
+        const isExpanded = expandedMenus.has(m.id);
+
+        const li = document.createElement('li');
+        li.className = 'tree-node';
+        li.innerHTML = `
+            <div class="flex items-center justify-between px-5 py-2.5 cursor-pointer menu-hover text-sm ${isActive ? 'active-menu' : ''}"
+                 onclick="${hasChildren ? `toggleMenu('${m.id}')` : `navigate('${m.id}')`}">
+                <div class="flex items-center gap-2.5">
+                    <i class="fa-solid ${m.icon} w-5 text-center text-sm"></i>
+                    <span>${m.label}</span>
+                </div>
+                ${hasChildren ? `<i class="fa-solid fa-chevron-down text-xs transition-transform duration-200 ${isExpanded ? 'rotate-0' : '-rotate-90'}" style="color:#bbb"></i>` : ''}
+            </div>
+            ${hasChildren ? `<div class="overflow-hidden transition-all duration-200" id="sub-${m.id}" style="${isExpanded ? 'max-height:500px' : 'max-height:0'}">
+                ${m.children.map(c => `
+                    <div class="flex items-center gap-2 pl-12 pr-5 py-2 cursor-pointer menu-hover text-xs ${currentPage === c.id ? 'active-submenu font-medium' : ''}"
+                         onclick="navigate('${c.id}')">
+                        <span class="w-1 h-1 rounded-full ${currentPage === c.id ? 'bg-blue-500' : 'bg-gray-300'}"></span>
+                        <span>${c.label}</span>
+                    </div>
+                `).join('')}
+            </div>` : ''}
+        `;
+        ul.appendChild(li);
+    });
+}
+
+function toggleMenu(id) {
+    if (expandedMenus.has(id)) expandedMenus.delete(id);
+    else expandedMenus.add(id);
+    renderSidebar();
+}
+
+function navigate(page) {
+    currentPage = page;
+    // 展开父菜单
+    const data = currentRole === 'gov' ? govData : entData;
+    data.menus.forEach(m => {
+        if (m.children && m.children.some(c => c.id === page)) expandedMenus.add(m.id);
+    });
+    renderSidebar();
+    renderContent();
+}
+
+function switchRole(role) {
+    currentRole = role;
+    currentPage = role === 'gov' ? 'dashboard' : 'ent-dashboard';
+    expandedMenus.clear();
+    document.getElementById('role-gov').className = role === 'gov' ? 'role-tag-active px-4 py-1.5 text-xs font-medium' : 'role-tag-inactive px-4 py-1.5 text-xs font-medium';
+    document.getElementById('role-ent').className = role === 'ent' ? 'role-tag-active px-4 py-1.5 text-xs font-medium' : 'role-tag-inactive px-4 py-1.5 text-xs font-medium';
+    document.getElementById('header-user-name').textContent = role === 'gov' ? '您好，系统管理员' : '您好，企业用户';
+    renderSidebar();
+    renderContent();
+}
+
+// ==================== MODAL ====================
+function openModal(title, bodyHtml) {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-body').innerHTML = bodyHtml;
+    document.getElementById('global-modal').classList.add('show');
+}
+function closeModal() { document.getElementById('global-modal').classList.remove('show'); }
+document.getElementById('global-modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+
+// ==================== PAGE RENDERERS ====================
+function renderContent() {
+    const main = document.getElementById('main-content');
+    main.className = 'flex-1 overflow-y-auto p-5 bg-gray-50';
+    main.style = '';
+
+    const pages = {
+        // ===== 政府端 =====
+        'dashboard': renderGovDashboard,
+        'archive-search': renderArchiveSearch,
+        'archive-new': renderArchiveNew,
+        'sys-perm-apply': renderSysPermApply,
+        'sys-ent-perm': renderSysEntPerm,
+        'sys-user-perm': renderSysUserPerm,
+        'sys-archive-perm': renderSysArchivePerm,
+        'sys-category': renderSysCategory,
+        'sys-tag': renderSysTag,
+        'log-query': renderLogQuery,
+        'log-export': renderLogExport,
+        // ===== 企业端 =====
+        'ent-dashboard': renderEntDashboard,
+        'ent-archive-list': renderEntArchiveList,
+        'ent-archive-upload': renderEntArchiveUpload,
+        'ent-message': renderEntMessage,
+        'ent-log': renderEntLog
+    };
+
+    const renderer = pages[currentPage] || renderGovDashboard;
+    main.innerHTML = renderer();
+    main.classList.add('fade-in');
+}
+
+// ==================== GOV PAGES ====================
+function renderGovDashboard() {
+    const { archives, todos, messages } = mockData;
+    const totalArchives = archives.length;
+    const approved = archives.filter(a => a.status === '已归档').length;
+    const pending = archives.filter(a => a.status === '审核中').length;
+    const totalViews = archives.reduce((s, a) => s + a.views, 0);
+
+    // 月度数据
+    const monthData = [12, 18, 8, 22, 15, 28, 20, 14, 10, 6, 24, 30];
+
+    return `
+    <div class="space-y-5">
+        <!-- 统计卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="card-blue rounded-lg p-4 text-white relative overflow-hidden shadow-sm h-28">
+                <div class="relative z-10"><div class="text-3xl font-bold">${totalArchives}</div><div class="text-sm opacity-90 mt-1">档案总数</div></div>
+                <div class="absolute top-3 right-4 text-4xl opacity-25 z-10"><i class="fa-solid fa-folder-open"></i></div>
+                <div class="wave-bg"></div>
+            </div>
+            <div class="card-green rounded-lg p-4 text-white relative overflow-hidden shadow-sm h-28">
+                <div class="relative z-10"><div class="text-3xl font-bold">${approved}</div><div class="text-sm opacity-90 mt-1">已审核档案</div></div>
+                <div class="absolute top-3 right-4 text-4xl opacity-25 z-10"><i class="fa-solid fa-check-circle"></i></div>
+                <div class="wave-bg"></div>
+            </div>
+            <div class="card-orange rounded-lg p-4 text-white relative overflow-hidden shadow-sm h-28">
+                <div class="relative z-10"><div class="text-3xl font-bold">${pending}</div><div class="text-sm opacity-90 mt-1">审核中档案</div></div>
+                <div class="absolute top-3 right-4 text-4xl opacity-25 z-10"><i class="fa-solid fa-clock"></i></div>
+                <div class="wave-bg"></div>
+            </div>
+            <div class="card-purple rounded-lg p-4 text-white relative overflow-hidden shadow-sm h-28">
+                <div class="relative z-10"><div class="text-3xl font-bold">${totalViews}</div><div class="text-sm opacity-90 mt-1">累计查询次数</div></div>
+                <div class="absolute top-3 right-4 text-4xl opacity-25 z-10"><i class="fa-solid fa-magnifying-glass"></i></div>
+                <div class="wave-bg"></div>
+            </div>
+        </div>
+
+        <!-- 待办 & 推送消息 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <!-- 待办事项 -->
+            <div class="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-100">
+                <div class="p-4 border-b border-gray-100 flex justify-between items-center">
+                    <h2 class="section-title"><i class="fa-solid fa-list-check mr-1"></i>待办事项</h2>
+                    <span class="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded">共 ${todos.length} 项</span>
+                </div>
+                <div class="p-4">
+                    <table class="w-full text-xs">
+                        <thead><tr class="text-gray-500 border-b border-gray-100">
+                            <th class="text-left py-2 font-medium">标题</th>
+                            <th class="text-left py-2 font-medium">类型</th>
+                            <th class="text-left py-2 font-medium">状态</th>
+                            <th class="text-left py-2 font-medium">发起企业</th>
+                            <th class="text-left py-2 font-medium">时间</th>
+                            <th class="text-center py-2 font-medium">操作</th>
+                        </tr></thead>
+                        <tbody>
+                            ${todos.slice(0, 5).map(t => `
+                            <tr class="border-b border-gray-50 hover:bg-gray-50">
+                                <td class="py-2.5">${t.title}</td>
+                                <td class="py-2.5">${t.type}</td>
+                                <td class="py-2.5">${statusBadge(t.status)}</td>
+                                <td class="py-2.5">${t.company}</td>
+                                <td class="py-2.5 text-gray-400">${t.time}</td>
+                                <td class="py-2.5 text-center"><button class="text-blue-500 hover:text-blue-700" onclick="openModal('处理事项','<p class=text-sm>请选择处理方式</p><div class=mt-4 flex gap-3><button class=btn-primary onclick=closeModal()>通过</button><button class=btn-default onclick=closeModal()>驳回</button></div>')">处理</button></td>
+                            </tr>`).join('')}
+                        </tbody>
+                    </table>
+                    ${todos.length === 0 ? '<div class="text-center py-8 text-gray-400 text-sm">暂无待办事项</div>' : ''}
+                </div>
+            </div>
+
+            <!-- 推送消息 -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+                <div class="p-4 border-b border-gray-100 flex justify-between items-center">
+                    <h2 class="section-title"><i class="fa-regular fa-bell mr-1"></i>推送消息</h2>
+                    <span class="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded">${messages.filter(m => !m.read).length} 未读</span>
+                </div>
+                <div class="p-3 space-y-1">
+                    ${messages.slice(0, 6).map(m => `
+                    <div class="flex items-start gap-2 p-2 rounded hover:bg-gray-50 cursor-pointer ${m.read ? '' : 'bg-blue-50/50'}">
+                        <span class="mt-1.5 ${m.read ? 'bg-gray-300' : 'bg-blue-500'} w-1.5 h-1.5 rounded-full shrink-0"></span>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-xs ${m.read ? 'text-gray-500' : 'text-gray-800 font-medium'} truncate">${m.title}</div>
+                            <div class="text-[10px] text-gray-400 mt-0.5">${m.time}</div>
+                        </div>
+                    </div>`).join('')}
+                </div>
+                <div class="p-3 border-t border-gray-100 text-center">
+                    <button class="text-xs text-blue-500 hover:text-blue-700" onclick="navigate('ent-message')">查看全部消息</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 月度档案上传趋势 -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="section-title"><i class="fa-solid fa-chart-bar mr-1"></i>月度档案上传统计</h2>
+                <div class="flex bg-gray-100 rounded overflow-hidden text-xs">
+                    <button class="px-3 py-1 bg-blue-500 text-white">今年</button>
+                    <button class="px-3 py-1 text-gray-600 hover:bg-gray-200">去年</button>
+                </div>
+            </div>
+            <div class="flex items-end justify-between h-32 px-2" style="gap:2px">
+                ${monthData.map((v, i) => `
+                <div class="flex flex-col items-center flex-1">
+                    <div class="w-full bg-blue-400 rounded-t hover:bg-blue-500 cursor-pointer transition-all" style="height:${v * 4}px;min-height:4px" title="${v}份"></div>
+                    <span class="text-[10px] text-gray-400 mt-1">${i+1}月</span>
+                </div>`).join('')}
+            </div>
+        </div>
+
+        <!-- 最近动态 -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+            <h2 class="section-title mb-4"><i class="fa-solid fa-clock-rotate-left mr-1"></i>最近动态</h2>
+            <div class="space-y-2">
+                ${archives.slice(-5).reverse().map(a => `
+                <div class="flex items-center gap-3 text-xs py-1.5 border-b border-gray-50 last:border-0">
+                    <span class="text-blue-500"><i class="fa-solid fa-upload"></i></span>
+                    <span class="text-gray-800">${a.uploader}</span>
+                    <span class="text-gray-500">上传了</span>
+                    <span class="text-gray-800 font-medium">${a.title}</span>
+                    <span class="text-gray-400">${a.time}</span>
+                </div>`).join('')}
+            </div>
+        </div>
+    </div>`;
+}
+
+// 档案查询辅助函数（避免内嵌 HTML 到 onclick 导致引号混乱）
+const withdrawnArchives = new Set();
+const selectedPushArchives = new Set();
+function togglePushSelect(id) {
+    if (selectedPushArchives.has(id)) selectedPushArchives.delete(id);
+    else selectedPushArchives.add(id);
+}
+function toggleSelectAll(checked) {
+    document.querySelectorAll('.push-check').forEach(c => {
+        c.checked = checked;
+        if (checked) selectedPushArchives.add(c.value);
+        else selectedPushArchives.delete(c.value);
+    });
+}
+function showBatchPushModal() {
+    const count = selectedPushArchives.size;
+    if (count === 0) { alert('请先勾选需要推送的档案'); return; }
+    const selected = mockData.archives.filter(a => selectedPushArchives.has(a.id));
+    const listHtml = selected.map(a => `<div class="text-xs py-1 border-b border-gray-50">${a.title}（${a.company}）</div>`).join('');
+    openModal('批量推送','<p class="text-sm font-medium mb-2">已选择 <span class="text-blue-500">' + count + '</span> 条档案信息推送：</p><div class="max-h-32 overflow-y-auto bg-gray-50 rounded p-2 mb-3">' + listHtml + '</div><p class="text-sm font-medium mb-2">推送范围：</p><div class="text-xs text-gray-500 mb-3">相关企业：' + [...new Set(selected.map(a => a.company))].join('、') + '</div><div class="pt-3 border-t border-gray-100 flex items-center justify-between"><label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked><span class="text-sm text-gray-600">是否短信推送</span></label><div class="flex gap-2"><button class="btn-primary" onclick="closeModal()">推送</button><button class="btn-default" onclick="closeModal()">取消</button></div></div>');
+}
+function showArchiveDetail(id) {
+    const a = mockData.archives.find(x => x.id === id);
+    if (a) openModal('档案详情 - ' + a.title, renderArchiveDetail(a));
+}
+function showPreview(id) {
+    const a = mockData.archives.find(x => x.id === id);
+    if (a) openModal('在线预览','<div class="text-center py-8"><i class="fa-regular fa-file-pdf text-5xl text-red-400 mb-3"></i><p class="text-sm">' + a.title + '.pdf</p><p class="text-xs text-gray-400 mt-1">' + a.fileSize + '</p><div class="mt-4"><button class="btn-primary" onclick="closeModal()">在线预览</button></div></div>');
+}
+function showPushModal() {
+    openModal('推送档案','<p class="text-sm">选择推送人员：</p><div class="mt-3 space-y-2"><label class="flex items-center gap-2"><input type="checkbox"><span class="text-sm">张伟(信息中心)</span></label><label class="flex items-center gap-2"><input type="checkbox"><span class="text-sm">李强(规划建设局)</span></label><label class="flex items-center gap-2"><input type="checkbox"><span class="text-sm">王芳(产业发展局)</span></label></div><div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between"><label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked><span class="text-sm text-gray-600">是否短信推送</span></label><button class="btn-primary" onclick="closeModal()">推送</button></div>');
+}
+function showWithdrawConfirm(id) {
+    openModal('申请撤回','<p class="text-sm">确认撤回该档案的审核申请吗？</p><div class="mt-4 flex gap-2"><button class="btn-primary" onclick="confirmWithdraw(\'' + id + '\')">确认</button><button class="btn-default" onclick="closeModal()">取消</button></div>');
+}
+function confirmWithdraw(id) {
+    withdrawnArchives.add(id);
+    closeModal();
+    renderContent();
+}
+function showPermApprove() {
+    openModal('审批权限申请','<p class="text-sm">审批结果：</p><div class="mt-3 flex gap-3"><button class="btn-primary" onclick="closeModal()">通过</button><button class="btn-default" onclick="closeModal()">驳回</button></div>');
+}
+
+function renderArchiveSearch() {
+    const { archives, companies, categories, tags } = mockData;
+    return `
+    <div class="space-y-4">
+        <h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-search mr-1.5 text-blue-500"></i>档案查询</h2>
+        <!-- 搜索栏 -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
+                <div><label class="text-xs text-gray-500 block mb-1">企业名称</label><input class="form-input text-sm" placeholder="请输入企业名称"></div>
+                <div><label class="text-xs text-gray-500 block mb-1">项目名称</label><input class="form-input text-sm" placeholder="请输入项目名称"></div>
+                <div><label class="text-xs text-gray-500 block mb-1">文件名称</label><input class="form-input text-sm" placeholder="请输入文件名称"></div>
+                <div><label class="text-xs text-gray-500 block mb-1">档案分类</label>
+                    <select class="form-select text-sm"><option value="">全部</option>${categories.map(c => `<option>${c}</option>`).join('')}</select>
+                </div>
+                <div><label class="text-xs text-gray-500 block mb-1">档案标签</label>
+                    <select class="form-select text-sm"><option value="">全部</option>${tags.map(t => `<option>${t}</option>`).join('')}</select>
+                </div>
+                <div><label class="text-xs text-gray-500 block mb-1">关键字</label><input class="form-input text-sm" placeholder="全文检索（标题/正文）"></div>
+                <div><label class="text-xs text-gray-500 block mb-1">状态</label>
+                    <select class="form-select text-sm"><option>全部</option><option>已归档</option><option>审核中</option></select>
+                </div>
+                <div class="flex items-end gap-2">
+                    <button class="btn-primary flex-1"><i class="fa-solid fa-search mr-1"></i>查询</button>
+                    <button class="btn-default"><i class="fa-solid fa-rotate-left"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索结果 -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+            <div class="p-4 border-b border-gray-100 flex justify-between items-center">
+                <span class="text-sm font-medium text-gray-700">查询结果 <span class="text-blue-500">${archives.length}</span> 条</span>
+                <div class="flex gap-2">
+                    <button class="btn-default text-xs py-1 px-3" onclick="showBatchPushModal()"><i class="fa-regular fa-paper-plane mr-1"></i>推送</button>
+                    <button class="btn-default text-xs py-1 px-3"><i class="fa-solid fa-download mr-1"></i>导出</button>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-xs">
+                    <thead><tr class="text-gray-500 border-b border-gray-100 bg-gray-50/50">
+                        <th class="w-8 px-2 py-2.5"><input type="checkbox" onchange="toggleSelectAll(this.checked)"></th>
+                        <th class="text-left px-4 py-2.5 font-medium">档案编号</th>
+                        <th class="text-left px-4 py-2.5 font-medium">文件名称</th>
+                        <th class="text-left px-4 py-2.5 font-medium">企业</th>
+                        <th class="text-left px-4 py-2.5 font-medium">项目</th>
+                        <th class="text-left px-4 py-2.5 font-medium">分类</th>
+                        <th class="text-left px-4 py-2.5 font-medium">状态</th>
+                        <th class="text-left px-4 py-2.5 font-medium">上传人</th>
+                        <th class="text-left px-4 py-2.5 font-medium">上传时间</th>
+                        <th class="text-center px-4 py-2.5 font-medium">操作</th>
+                    </tr></thead>
+                    <tbody>
+                        ${archives.slice(0, 10).map(a => `
+                        <tr class="border-b border-gray-50 hover:bg-gray-50 cursor-pointer" onclick="showArchiveDetail('${a.id}')">
+                            <td class="px-2 py-2.5 text-center"><input type="checkbox" class="push-check" value="${a.id}" onclick="event.stopPropagation();togglePushSelect('${a.id}')"></td>
+                            <td class="px-4 py-2.5 text-blue-500">${a.id}</td>
+                            <td class="px-4 py-2.5 font-medium text-gray-800">${a.title}</td>
+                            <td class="px-4 py-2.5">${a.company}</td>
+                            <td class="px-4 py-2.5 max-w-[160px] truncate" title="${a.project}">${a.project}</td>
+                            <td class="px-4 py-2.5">${a.category}/${a.subCategory}</td>
+                            <td class="px-4 py-2.5">${statusBadge(a.status)}</td>
+                            <td class="px-4 py-2.5">${a.uploader}</td>
+                            <td class="px-4 py-2.5 text-gray-400">${a.uploadTime}</td>
+                            <td class="px-4 py-2.5 text-center">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <button class="text-blue-500 hover:text-blue-700 text-xs" title="预览" onclick="event.stopPropagation();showPreview('${a.id}')"><i class="fa-regular fa-eye"></i></button>
+                                    <button class="text-green-500 hover:text-green-700 text-xs" title="下载" onclick="event.stopPropagation();alert('模拟：开始下载 ${a.title}')"><i class="fa-solid fa-download"></i></button>
+                                    <button class="text-orange-500 hover:text-orange-700 text-xs" title="推送" onclick="event.stopPropagation();showPushModal()"><i class="fa-regular fa-paper-plane"></i></button>
+                                </div>
+                            </td>
+                        </tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>
+            <!-- 分页 -->
+            <div class="flex justify-between items-center px-4 py-3 border-t border-gray-100">
+                <span class="text-xs text-gray-400">显示 1-10 条，共 ${archives.length} 条</span>
+                <div class="flex items-center gap-1">
+                    <span class="page-item"><i class="fa-solid fa-angle-left"></i></span>
+                    <span class="page-item active">1</span>
+                    <span class="page-item">2</span>
+                    <span class="page-item">3</span>
+                    <span class="page-item">4</span>
+                    <span class="page-item"><i class="fa-solid fa-ellipsis-h"></i></span>
+                    <span class="page-item"><i class="fa-solid fa-angle-right"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>`;
+}
+
+function renderArchiveDetail(a) {
+    return `\
+<div class="text-sm"><div class="grid grid-cols-2 gap-3"><div><span class="text-gray-400">档案编号：</span><span>${a.id}</span></div>\
+<div><span class="text-gray-400">文件名称：</span><span class="font-medium">${a.title}</span></div>\
+<div><span class="text-gray-400">企业名称：</span><span>${a.company}</span></div>\
+<div><span class="text-gray-400">项目名称：</span><span>${a.project}</span></div>\
+<div><span class="text-gray-400">档案分类：</span><span>${a.category} / ${a.subCategory}</span></div>\
+<div><span class="text-gray-400">档案标签：</span><span>${a.tags.map(t => '<span class="badge-pending text-xs px-1.5 py-0.5 rounded">'+t+'</span>').join(' ')}</span></div>\
+<div><span class="text-gray-400">文件类型：</span><span>${a.fileType}</span></div>\
+<div><span class="text-gray-400">文件大小：</span><span>${a.fileSize}</span></div>\
+<div><span class="text-gray-400">上传人：</span><span>${a.uploader}</span></div>\
+<div><span class="text-gray-400">上传时间：</span><span>${a.uploadTime}</span></div>\
+<div><span class="text-gray-400">状态：</span>${statusBadge(a.status)}</div>\
+<div><span class="text-gray-400">下载次数：</span><span>${a.downloads} 次</span></div></div>\
+<div class="mt-4 pt-4 border-t border-gray-100 flex gap-4">\
+<button class="btn-primary" onclick="closeModal()"><i class="fa-regular fa-eye mr-1"></i>在线预览</button>\
+<button class="btn-default" onclick="closeModal()"><i class="fa-solid fa-download mr-1"></i>下载</button>\
+<button class="btn-default" onclick="closeModal()"><i class="fa-regular fa-paper-plane mr-1"></i>推送</button></div></div>`;
+}
+
+function renderArchiveNew() {
+    const { companies, projects } = mockData;
+    return `
+    <div class="space-y-4">
+        <h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-plus-circle mr-1.5 text-blue-500"></i>新增档案</h2>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div><label class="text-xs text-gray-500 block mb-1">企业名称 <span class="text-red-500">*</span></label>
+                    <input class="form-input text-sm" list="company-list" placeholder="输入企业名称模糊匹配">
+                    <datalist id="company-list">${companies.map(c => `<option value="${c}">`).join('')}</datalist>
+                </div>
+                <div><label class="text-xs text-gray-500 block mb-1">项目名称 <span class="text-red-500">*</span></label>
+                    <input class="form-input text-sm" list="project-list" placeholder="输入项目名称（自动查重）">
+                    <datalist id="project-list">${projects.map(p => `<option value="${p}">`).join('')}</datalist>
+                </div>
+                <div><label class="text-xs text-gray-500 block mb-1">一级分类 <span class="text-red-500">*</span></label>
+                    <select class="form-select text-sm"><option>项目立项</option><option>规划审批</option><option>用地审批</option><option>环评批复</option><option>施工许可</option><option>竣工验收</option></select>
+                </div>
+                <div><label class="text-xs text-gray-500 block mb-1">二级分类 <span class="text-red-500">*</span></label>
+                    <select class="form-select text-sm"><option>申请材料</option><option>审批文件</option><option>批复文件</option><option>验收报告</option><option>设计图纸</option></select>
+                </div>
+                <div><label class="text-xs text-gray-500 block mb-1">档案标签</label>
+                    <div class="flex flex-wrap gap-1.5">${['重点项目','政府投资','高新技术','节能环保'].map(t => `<label class="flex items-center gap-1 text-xs bg-gray-50 px-2 py-1 rounded cursor-pointer hover:bg-blue-50"><input type=checkbox> ${t}</label>`).join('')}</div>
+                </div>
+                <div><label class="text-xs text-gray-500 block mb-1">文件上传 <span class="text-red-500">*</span></label>
+                    <div class="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center cursor-pointer hover:border-blue-300">
+                        <i class="fa-solid fa-cloud-arrow-up text-2xl text-gray-300"></i>
+                        <p class="text-xs text-gray-400 mt-1">点击或拖拽上传（支持 PDF、Word、Excel）</p>
+                    </div>
+                </div>
+            </div>
+            <!-- 已上传文件列表 -->
+            <div class="mt-4 space-y-1.5">
+                <div class="flex items-center justify-between bg-gray-50 px-3 py-2 rounded text-xs">
+                    <div class="flex items-center gap-2"><i class="fa-regular fa-file-pdf text-red-400"></i><span>年产1000万套智能终端生产线建设项目_立项申请.pdf</span><span class="text-gray-400">2.3MB</span></div>
+                    <div class="flex items-center gap-3">
+                        <select class="text-xs border border-gray-200 rounded px-1 py-0.5"><option>所有人可见</option><option>仅管理员</option><option>指定用户</option></select>
+                        <button class="text-red-400 hover:text-red-600"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between bg-gray-50 px-3 py-2 rounded text-xs">
+                    <div class="flex items-center gap-2"><i class="fa-regular fa-file-word text-blue-400"></i><span>新型合金材料研发中心_环评报告.docx</span><span class="text-gray-400">1.8MB</span></div>
+                    <div class="flex items-center gap-3">
+                        <select class="text-xs border border-gray-200 rounded px-1 py-0.5"><option>所有人可见</option><option selected>仅管理员</option><option>指定用户</option></select>
+                        <button class="text-red-400 hover:text-red-600"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-5 flex gap-3">
+                <button class="btn-primary px-6"><i class="fa-solid fa-upload mr-1"></i>提交归档</button>
+                <button class="btn-default"><i class="fa-solid fa-rotate-left mr-1"></i>重置</button>
+            </div>
+        </div>
+    </div>`;
+}
+
+function renderSysPermApply() {
+    const { users, archives } = mockData;
+    return `
+    <div class="space-y-4">
+        <h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-key mr-1.5 text-blue-500"></i>权限申请</h2>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+            <table class="w-full text-xs">
+                <thead><tr class="text-gray-500 border-b border-gray-100"><th class="text-left py-2 font-medium">申请编号</th><th class="text-left py-2 font-medium">申请人</th><th class="text-left py-2 font-medium">申请档案</th><th class="text-left py-2 font-medium">申请理由</th><th class="text-left py-2 font-medium">状态</th><th class="text-left py-2 font-medium">申请时间</th><th class="text-center py-2 font-medium">操作</th></tr></thead>
+                <tbody>
+                    ${[
+                        { id: 'SQ-2026-0001', user: '赵明', archive: '年产1000万套智能终端项目_立项申请', reason: '需要查看项目立项材料', status: '待审批', time: '2026-06-07 09:30' },
+                        { id: 'SQ-2026-0002', user: '刘洋', archive: '新型合金材料研发中心_验收报告', reason: '项目验收需要参考', status: '待审批', time: '2026-06-06 14:20' },
+                        { id: 'SQ-2026-0003', user: '王芳', archive: '绿色食品加工产业园_环评批复', reason: '补充环评材料', status: '已通过', time: '2026-06-05 11:00' },
+                        { id: 'SQ-2026-0004', user: '李强', archive: '医药生产基地_施工许可', reason: '施工进度跟踪', status: '已驳回', time: '2026-06-04 16:45' }
+                    ].map(a => `
+                    <tr class="border-b border-gray-50 hover:bg-gray-50">
+                        <td class="py-2.5 text-blue-500">${a.id}</td>
+                        <td class="py-2.5">${a.user}</td>
+                        <td class="py-2.5 max-w-[180px] truncate">${a.archive}</td>
+                        <td class="py-2.5">${a.reason}</td>
+                        <td class="py-2.5">${statusBadge(a.status)}</td>
+                        <td class="py-2.5 text-gray-400">${a.time}</td>
+                        <td class="py-2.5 text-center">${a.status === '待审批' ? '<button class="text-blue-500 hover:text-blue-700 text-xs mr-2" onclick="showPermApprove()">审批</button>' : '<span class="text-gray-400">—</span>'}</td>
+                    </tr>`).join('')}
+                </tbody>
+            </table>
+        </div>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+            <h3 class="text-sm font-medium text-gray-700 mb-3"><i class="fa-solid fa-plus-circle mr-1 text-blue-500"></i>提交权限申请</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div><label class="text-xs text-gray-500 block mb-1">选择档案</label>
+                    <select class="form-select text-sm"><option>年产1000万套智能终端项目_立项申请</option><option>新型合金材料研发中心_环评报告</option><option>绿色食品加工产业园_验收资料</option></select>
+                </div>
+                <div><label class="text-xs text-gray-500 block mb-1">申请理由</label><input class="form-input text-sm" placeholder="请输入申请理由"></div>
+                <div class="flex items-end"><button class="btn-primary"><i class="fa-regular fa-paper-plane mr-1"></i>提交申请</button></div>
+            </div>
+        </div>
+    </div>`;
+}
+
+function renderSysEntPerm() {
+    const { companies } = mockData;
+    return `
+    <div class="space-y-4">
+        <h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-building mr-1.5 text-blue-500"></i>企业权限管理</h2>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+            <div class="mb-3 flex gap-2"><input class="form-input text-sm max-w-xs" placeholder="搜索企业名称"><button class="btn-primary text-xs"><i class="fa-solid fa-search mr-1"></i>搜索</button></div>
+            <table class="w-full text-xs">
+                <thead><tr class="text-gray-500 border-b border-gray-100"><th class="text-left py-2 font-medium">企业名称</th><th class="text-left py-2 font-medium">统一信用代码</th><th class="text-left py-2 font-medium">可访问档案数</th><th class="text-left py-2 font-medium">关联项目数</th><th class="text-left py-2 font-medium">状态</th><th class="text-center py-2 font-medium">操作</th></tr></thead>
+                <tbody>${companies.slice(0, 8).map((c, i) => `
+                    <tr class="border-b border-gray-50 hover:bg-gray-50">
+                        <td class="py-2.5 font-medium text-gray-800">${c}</td>
+                        <td class="py-2.5">91430122MA${String(4 + i).padStart(4, '0')}XXXX</td>
+                        <td class="py-2.5">${Math.floor(Math.random() * 20 + 3)}</td>
+                        <td class="py-2.5">${Math.floor(Math.random() * 5 + 1)}</td>
+                        <td class="py-2.5">${statusBadge(i % 3 === 0 ? '待审核' : '已归档')}</td>
+                        <td class="py-2.5 text-center"><button class="text-blue-500 hover:text-blue-700 text-xs" onclick="openModal('权限配置','<p class=text-sm text-gray-600>配置企业 <b>'+t('${c}')+'</b> 的档案访问权限</p><div class=mt-3><label class=text-xs text-gray-500>关联档案：</label><div class=mt-1 space-y-1 max-h-40 overflow-y-auto>${mockData.archives.slice(0,6).map(a => `<label class=flex items-center gap-2 text-xs><input type=checkbox ${Math.random()>0.5?'checked':''}><span>${a.title}</span></label>`).join('')}</div></div><div class=mt-4><button class=btn-primary onclick=closeModal()>保存</button></div>')">配置权限</button></td>
+                    </tr>`).join('')}
+                </tbody>
+            </table>
+        </div>
+    </div>`;
+}
+
+function renderSysUserPerm() {
+    const { users } = mockData;
+    const roles = ['超级管理员', '档案管理员', '普通查询员', '审批员'];
+    return `
+    <div class="space-y-4">
+        <h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-users mr-1.5 text-blue-500"></i>用户权限管理</h2>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+            <div class="flex justify-between items-center mb-3">
+                <div class="flex gap-2"><input class="form-input text-sm max-w-xs" placeholder="搜索用户名/部门"><button class="btn-primary text-xs"><i class="fa-solid fa-search mr-1"></i>搜索</button></div>
+                <button class="btn-primary text-xs"><i class="fa-solid fa-plus mr-1"></i>新增用户</button>
+            </div>
+            <table class="w-full text-xs">
+                <thead><tr class="text-gray-500 border-b border-gray-100"><th class="text-left py-2 font-medium">用户名</th><th class="text-left py-2 font-medium">部门</th><th class="text-left py-2 font-medium">角色</th><th class="text-left py-2 font-medium">权限范围</th><th class="text-left py-2 font-medium">状态</th><th class="text-center py-2 font-medium">操作</th></tr></thead>
+                <tbody>${users.map((u, i) => `
+                    <tr class="border-b border-gray-50 hover:bg-gray-50">
+                        <td class="py-2.5 font-medium text-gray-800">${u.name}</td>
+                        <td class="py-2.5">${u.dept}</td>
+                        <td class="py-2.5"><span class="badge-processing text-xs px-2 py-0.5 rounded">${u.role}</span></td>
+                        <td class="py-2.5">${u.role === '超级管理员' ? '全部权限' : u.role === '档案管理员' ? '档案管理、分类管理、标签管理' : '查询、预览、下载'}</td>
+                        <td class="py-2.5">${statusBadge(i === 0 ? '已归档' : '已归档')}</td>
+                        <td class="py-2.5 text-center"><button class="text-blue-500 hover:text-blue-700 text-xs" onclick="openModal('编辑用户','<div class=space-y-3><div><label class=text-xs text-gray-500>用户名</label><input class=form-input text-sm value=\\'${u.name}\\'></div><div><label class=text-xs text-gray-500>部门</label><input class=form-input text-sm value=\\'${u.dept}\\'></div><div><label class=text-xs text-gray-500>角色</label><select class=form-select text-sm>${roles.map(r => `<option ${r === u.role ? 'selected' : ''}>${r}</option>`).join('')}</select></div></div><div class=mt-4><button class=btn-primary onclick=closeModal()>保存</button></div>')">编辑</button></td>
+                    </tr>`).join('')}
+                </tbody>
+            </table>
+        </div>
+    </div>`;
+}
+
+function renderSysArchivePerm() {
+    return `
+    <div class="space-y-4">
+        <h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-shield mr-1.5 text-blue-500"></i>档案权限管理</h2>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+            <p class="text-sm text-gray-500 mb-4">针对特定档案设置访问权限，控制哪些用户/角色可以查看、下载、打印。</p>
+            <table class="w-full text-xs">
+                <thead><tr class="text-gray-500 border-b border-gray-100"><th class="text-left py-2 font-medium">档案名称</th><th class="text-left py-2 font-medium">可查看</th><th class="text-left py-2 font-medium">可下载</th><th class="text-left py-2 font-medium">可管理</th><th class="text-center py-2 font-medium">操作</th></tr></thead>
+                <tbody>${mockData.archives.slice(0, 8).map(a => `
+                    <tr class="border-b border-gray-50 hover:bg-gray-50">
+                        <td class="py-2.5 max-w-[200px] truncate font-medium text-gray-800">${a.title}</td>
+                        <td class="py-2.5">${['超级管理员, 档案管理员', '超级管理员, 档案管理员, 普通查询员', '超级管理员'][Math.floor(Math.random() * 3)]}</td>
+                        <td class="py-2.5">${['超级管理员, 档案管理员', '超级管理员'][Math.floor(Math.random() * 2)]}</td>
+                        <td class="py-2.5">超级管理员</td>
+                        <td class="py-2.5 text-center"><button class="text-blue-500 hover:text-blue-700 text-xs" onclick="openModal('权限配置','<p class=text-sm>配置权限：<b>${a.title}</b></p><div class=mt-3 space-y-2>${['查看','下载','打印','修改','删除'].map(p => `<label class=flex items-center gap-2 text-xs><input type=checkbox checked><span>${p}</span></label>`).join('')}</div><div class=mt-4><button class=btn-primary onclick=closeModal()>保存</button></div>')">编辑</button></td>
+                    </tr>`).join('')}
+                </tbody>
+            </table>
+        </div>
+    </div>`;
+}
+
+function renderSysCategory() {
+    const cats = [
+        { id: 1, name: '项目立项', subs: ['申请材料', '审批文件', '批复文件'] },
+        { id: 2, name: '规划审批', subs: ['规划方案', '审批意见', '许可证'] },
+        { id: 3, name: '用地审批', subs: ['用地申请', '审批文件', '不动产权证'] },
+        { id: 4, name: '环评批复', subs: ['环评报告', '批复文件', '监测数据'] },
+        { id: 5, name: '施工许可', subs: ['施工申请', '许可证', '验收报告'] },
+        { id: 6, name: '竣工验收', subs: ['验收资料', '验收报告', '备案文件'] }
+    ];
+    return `
+    <div class="space-y-4">
+        <h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-folder-tree mr-1.5 text-blue-500"></i>档案分类管理</h2>
+        <div class="flex justify-end mb-2"><button class="btn-primary text-xs"><i class="fa-solid fa-plus mr-1"></i>新增分类</button></div>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+            <table class="w-full text-xs">
+                <thead><tr class="text-gray-500 border-b border-gray-100 bg-gray-50/50"><th class="text-left px-4 py-2.5 font-medium">一级分类</th><th class="text-left px-4 py-2.5 font-medium">二级分类</th><th class="text-left px-4 py-2.5 font-medium">关联档案数</th><th class="text-left px-4 py-2.5 font-medium">排序</th><th class="text-center px-4 py-2.5 font-medium">操作</th></tr></thead>
+                <tbody>${cats.map(c => `
+                    <tr class="border-b border-gray-50"><td class="px-4 py-3 font-medium text-gray-800" rowspan="${c.subs.length}">${c.name}</td>
+                        <td class="px-4 py-2">${c.subs[0]}</td><td class="px-4 py-2">${Math.floor(Math.random() * 20 + 3)}</td><td class="px-4 py-2">${c.id}</td>
+                        <td class="px-4 py-2 text-center" rowspan="${c.subs.length}">
+                            <button class="text-blue-500 hover:text-blue-700 text-xs mr-2" onclick="openModal('编辑分类','<div class=space-y-3><div><label class=text-xs text-gray-500>分类名称</label><input class=form-input value=\\'${c.name}\\'></div><div><label class=text-xs text-gray-500>排序</label><input class=form-input value=\\'${c.id}\\' type=number></div></div><div class=mt-4><button class=btn-primary onclick=closeModal()>保存</button></div>')">编辑</button>
+                            <button class="text-red-400 hover:text-red-600 text-xs" onclick="if(confirm('确认删除？'))alert('已删除')">删除</button>
+                        </td>
+                    </tr>${c.subs.slice(1).map(s => `<tr class="border-b border-gray-50"><td class="px-4 py-2">${s}</td><td class="px-4 py-2">${Math.floor(Math.random() * 15 + 1)}</td><td class="px-4 py-2">${c.id}${c.subs.indexOf(s) + 1}</td></tr>`).join('')}`).join('')}
+                </tbody>
+            </table>
+        </div>
+    </div>`;
+}
+
+function renderSysTag() {
+    const tagList = ['重点项目', '招商引资', '政府投资', '企业自筹', 'PPP项目', '高新技术', '节能环保', '产业升级', '民生工程', '基础设施'];
+    return `
+    <div class="space-y-4">
+        <h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-tags mr-1.5 text-blue-500"></i>档案标签管理</h2>
+        <div class="flex justify-end mb-2"><button class="btn-primary text-xs"><i class="fa-solid fa-plus mr-1"></i>新增标签</button></div>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+            <div class="flex flex-wrap gap-2">${tagList.map((t, i) => `
+                <div class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded px-3 py-1.5 text-sm hover:border-blue-300 cursor-pointer">
+                    <span>${t}</span>
+                    <span class="text-xs text-gray-400">(${Math.floor(Math.random() * 30 + 5)})</span>
+                    <button class="text-gray-300 hover:text-red-400 text-xs ml-1" onclick="if(confirm('确认删除标签？'))this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
+                </div>`).join('')}
+            </div>
+            <div class="mt-4 pt-4 border-t border-gray-100">
+                <div class="flex gap-2 items-center">
+                    <input class="form-input text-sm max-w-xs" placeholder="输入新标签名称">
+                    <button class="btn-primary text-xs">添加</button>
+                </div>
+            </div>
+        </div>
+    </div>`;
+}
+
+function renderLogQuery() {
+    const { logs } = mockData;
+    return `
+    <div class="space-y-4">
+        <h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-magnifying-glass-chart mr-1.5 text-blue-500"></i>日志查询</h2>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-3">
+                <div><label class="text-xs text-gray-500 block mb-1">用户名</label><input class="form-input text-sm" placeholder="用户名"></div>
+                <div><label class="text-xs text-gray-500 block mb-1">部门</label><input class="form-input text-sm" placeholder="部门"></div>
+                <div><label class="text-xs text-gray-500 block mb-1">操作类型</label><select class="form-select text-sm"><option>全部</option><option>登录</option><option>查询</option><option>上传</option><option>下载</option><option>修改</option><option>删除</option><option>审批</option></select></div>
+                <div><label class="text-xs text-gray-500 block mb-1">开始时间</label><input class="form-input text-sm" type="date" value="2026-06-01"></div>
+                <div><label class="text-xs text-gray-500 block mb-1">结束时间</label><input class="form-input text-sm" type="date" value="2026-06-09"></div>
+            </div>
+            <button class="btn-primary text-xs"><i class="fa-solid fa-search mr-1"></i>查询</button>
+        </div>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+            <div class="p-4 border-b border-gray-100 flex justify-between items-center">
+                <span class="text-sm font-medium text-gray-700">日志记录 <span class="text-blue-500">${logs.length}</span> 条</span>
+                <button class="btn-default text-xs py-1 px-3"><i class="fa-solid fa-download mr-1"></i>导出</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-xs">
+                    <thead><tr class="text-gray-500 border-b border-gray-100 bg-gray-50/50">
+                        <th class="text-left px-4 py-2.5 font-medium">时间</th><th class="text-left px-4 py-2.5 font-medium">用户名</th><th class="text-left px-4 py-2.5 font-medium">角色</th><th class="text-left px-4 py-2.5 font-medium">部门</th>
+                        <th class="text-left px-4 py-2.5 font-medium">操作内容</th><th class="text-left px-4 py-2.5 font-medium">结果</th></tr></thead>
+                    <tbody>${logs.slice(0, 15).map(l => `
+                        <tr class="border-b border-gray-50 hover:bg-gray-50">
+                            <td class="px-4 py-2 text-gray-400">${l.time}</td><td class="px-4 py-2">${l.user}</td><td class="px-4 py-2">${l.role}</td><td class="px-4 py-2">${l.dept}</td>
+                            <td class="px-4 py-2">${l.action}</td><td class="px-4 py-2">${statusBadge(l.result)}</td>
+                        </tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>
+            <div class="flex justify-between items-center px-4 py-3 border-t border-gray-100">
+                <span class="text-xs text-gray-400">显示 1-15 条，共 ${logs.length} 条</span>
+                <div class="flex items-center gap-1"><span class="page-item"><i class="fa-solid fa-angle-left"></i></span><span class="page-item active">1</span><span class="page-item">2</span><span class="page-item"><i class="fa-solid fa-angle-right"></i></span></div>
+            </div>
+        </div>
+    </div>`;
+}
+
+function renderLogExport() {
+    return `
+    <div class="space-y-4">
+        <h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-file-export mr-1.5 text-blue-500"></i>日志导出</h2>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
+                <div><label class="text-xs text-gray-500 block mb-1">用户名</label><input class="form-input text-sm" placeholder="可选"></div>
+                <div><label class="text-xs text-gray-500 block mb-1">部门</label><input class="form-input text-sm" placeholder="可选"></div>
+                <div><label class="text-xs text-gray-500 block mb-1">开始时间</label><input class="form-input text-sm" type="date" value="2026-01-01"></div>
+                <div><label class="text-xs text-gray-500 block mb-1">结束时间</label><input class="form-input text-sm" type="date" value="2026-06-09"></div>
+            </div>
+            <div class="flex gap-2"><button class="btn-primary" onclick="alert('模拟：正在导出日志数据...')"><i class="fa-solid fa-file-excel mr-1"></i>导出 Excel</button><button class="btn-default" onclick="alert('模拟：正在导出日志数据...')"><i class="fa-solid fa-file-csv mr-1"></i>导出 CSV</button></div>
+            <div class="mt-4 p-3 bg-gray-50 rounded text-xs text-gray-400">提示：导出的日志数据包含用户名、姓名、角色、部门、操作内容、操作结果、操作时间等字段。</div>
+        </div>
+    </div>`;
+}
+
+// ==================== ENTERPRISE PAGES ====================
+function renderEntDashboard() {
+    const { archives } = mockData;
+    const entArchives = archives.filter((_, i) => i % 2 === 0);
+    const approved = entArchives.filter(a => a.status === '已归档').length;
+    const pending = entArchives.filter(a => a.status === '审核中').length;
+    return `
+    <div class="space-y-5">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="card-blue rounded-lg p-4 text-white relative overflow-hidden shadow-sm h-28">
+                <div class="relative z-10"><div class="text-3xl font-bold">${entArchives.length}</div><div class="text-sm opacity-90 mt-1">本企业档案总数</div></div>
+                <div class="absolute top-3 right-4 text-4xl opacity-25 z-10"><i class="fa-solid fa-folder-open"></i></div><div class="wave-bg"></div>
+            </div>
+            <div class="card-green rounded-lg p-4 text-white relative overflow-hidden shadow-sm h-28">
+                <div class="relative z-10"><div class="text-3xl font-bold">${approved}</div><div class="text-sm opacity-90 mt-1">已审核</div></div>
+                <div class="absolute top-3 right-4 text-4xl opacity-25 z-10"><i class="fa-solid fa-check-circle"></i></div><div class="wave-bg"></div>
+            </div>
+            <div class="card-orange rounded-lg p-4 text-white relative overflow-hidden shadow-sm h-28">
+                <div class="relative z-10"><div class="text-3xl font-bold">${pending}</div><div class="text-sm opacity-90 mt-1">待审核</div></div>
+                <div class="absolute top-3 right-4 text-4xl opacity-25 z-10"><i class="fa-solid fa-clock"></i></div><div class="wave-bg"></div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+                <h2 class="section-title mb-3"><i class="fa-solid fa-clock-rotate-left mr-1"></i>审核进度</h2>
+                <div class="space-y-2">${entArchives.slice(0, 5).map(a => `
+                    <div class="flex items-center justify-between text-xs py-2 border-b border-gray-50">
+                        <span class="max-w-[200px] truncate">${a.title}</span>
+                        ${statusBadge(a.status)}
+                        <span class="text-gray-400">${a.uploadTime}</span>
+                    </div>`).join('')}
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+                <h2 class="section-title mb-3"><i class="fa-regular fa-bell mr-1"></i>最新通知</h2>
+                <div class="space-y-2">${[
+                    { title: '【审核通过】年产1000万套智能终端项目_立项申请已通过审核', time: '2026-06-08 14:30' },
+                    { title: '【退回提醒】新型合金材料研发中心_环评报告需补充材料', time: '2026-06-07 09:15' },
+                    { title: '【审核中】绿色食品加工产业园_验收资料正在审核', time: '2026-06-06 16:40' },
+                    { title: '【上传成功】医药医疗器械生产基地_施工图纸上传成功', time: '2026-06-05 11:20' }
+                ].map(n => `<div class="flex items-start gap-2 text-xs py-2 border-b border-gray-50 cursor-pointer hover:bg-gray-50"><span class="mt-1 bg-blue-500 w-1.5 h-1.5 rounded-full shrink-0"></span><span>${n.title}</span><span class="text-gray-400 shrink-0">${n.time}</span></div>`).join('')}
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+            <h2 class="section-title mb-3"><i class="fa-solid fa-upload mr-1"></i>快捷操作</h2>
+            <div class="flex gap-3">
+                <button class="btn-primary" onclick="navigate('ent-archive-upload')"><i class="fa-solid fa-cloud-arrow-up mr-1"></i>上传档案</button>
+                <button class="btn-default" onclick="navigate('ent-archive-list')"><i class="fa-solid fa-list mr-1"></i>查看档案列表</button>
+            </div>
+        </div>
+    </div>`;
+}
+
+function renderEntArchiveList() {
+    const { archives } = mockData;
+    const entArchives = archives.filter((_, i) => i % 2 === 0);
+    return `
+    <div class="space-y-4">
+        <h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-list mr-1.5 text-blue-500"></i>档案列表</h2>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+            <div class="flex flex-wrap gap-3 mb-3">
+                <div><label class="text-xs text-gray-500 block mb-1">关键词</label><input class="form-input text-sm" placeholder="标题/正文检索"></div>
+                <div><label class="text-xs text-gray-500 block mb-1">状态筛选</label><select class="form-select text-sm"><option>全部</option><option>已审核</option><option>待审核</option><option>已退回</option></select></div>
+                <div><label class="text-xs text-gray-500 block mb-1">项目</label><select class="form-select text-sm"><option>全部项目</option>${mockData.projects.slice(0,5).map(p => `<option>${p}</option>`).join('')}</select></div>
+                <div class="flex items-end gap-2"><button class="btn-primary text-xs"><i class="fa-solid fa-search mr-1"></i>查询</button><button class="btn-default text-xs"><i class="fa-solid fa-rotate-left"></i></button></div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+            <div class="overflow-x-auto">
+                <table class="w-full text-xs">
+                    <thead><tr class="text-gray-500 border-b border-gray-100 bg-gray-50/50">
+                        <th class="text-left px-4 py-2.5 font-medium">文件名称</th><th class="text-left px-4 py-2.5 font-medium">项目</th><th class="text-left px-4 py-2.5 font-medium">分类</th>
+                        <th class="text-left px-4 py-2.5 font-medium">状态</th><th class="text-left px-4 py-2.5 font-medium">上传时间</th><th class="text-center px-4 py-2.5 font-medium">操作</th>
+                    </tr></thead>
+                    <tbody>${entArchives.slice(0, 10).map(a => `
+                        <tr class="border-b border-gray-50 hover:bg-gray-50">
+                            <td class="px-4 py-2.5 font-medium text-gray-800">${a.title}</td>
+                            <td class="px-4 py-2.5 max-w-[150px] truncate">${a.project}</td>
+                            <td class="px-4 py-2.5">${a.category}</td>
+                            <td class="px-4 py-2.5">${statusBadge(a.status)}</td>
+                            <td class="px-4 py-2.5 text-gray-400">${a.uploadTime}</td>
+                            <td class="px-4 py-2.5 text-center">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <button class="text-blue-500 hover:text-blue-700 text-xs" onclick="openModal('在线预览','<div class=text-center py-8><i class=\\'fa-regular fa-file-pdf text-5xl text-red-400 mb-3\\'></i><p class=text-sm>${a.title}.pdf</p><p class=text-xs text-gray-400 mt-1>${a.fileSize}</p><div class=mt-4><button class=btn-primary>在线预览</button></div></div>')"><i class="fa-regular fa-eye"></i></button>
+                                    <button class="text-green-500 hover:text-green-700 text-xs" onclick="alert('模拟：开始下载 ${a.title}')"><i class="fa-solid fa-download"></i></button>
+                                    ${a.status === '审核中' ? (withdrawnArchives.has(a.id) ? '<span class="text-gray-400 text-xs">已申请撤回</span>' : `<button class="text-orange-500 hover:text-orange-700 text-xs" onclick="event.stopPropagation();showWithdrawConfirm('${a.id}')"><i class="fa-solid fa-rotate-left"></i>申请撤回</button>`) : ''}
+                                </div>
+                            </td>
+                        </tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>
+            <div class="flex justify-between items-center px-4 py-3 border-t border-gray-100">
+                <span class="text-xs text-gray-400">显示 1-10 条</span>
+                <div class="flex items-center gap-1"><span class="page-item"><i class="fa-solid fa-angle-left"></i></span><span class="page-item active">1</span><span class="page-item">2</span><span class="page-item"><i class="fa-solid fa-angle-right"></i></span></div>
+            </div>
+        </div>
+    </div>`;
+}
+
+function renderEntArchiveUpload() {
+    const { projects } = mockData;
+    return `
+    <div class="space-y-4">
+        <h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-cloud-arrow-up mr-1.5 text-blue-500"></i>档案上传</h2>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div><label class="text-xs text-gray-500 block mb-1">关联项目 <span class="text-red-500">*</span></label>
+                    <select class="form-select text-sm"><option>年产1000万套智能终端生产线建设项目</option><option>新型合金材料研发中心建设项目</option><option>绿色食品加工产业园项目</option><option>医药医疗器械生产基地项目</option></select>
+                </div>
+                <div><label class="text-xs text-gray-500 block mb-1">档案分类 <span class="text-red-500">*</span></label>
+                    <select class="form-select text-sm"><option>项目立项</option><option>规划审批</option><option>用地审批</option><option>环评批复</option><option>施工许可</option></select>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="text-xs text-gray-500 block mb-1">上传文件 <span class="text-red-500">*</span></label>
+                    <div class="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center cursor-pointer hover:border-blue-300 hover:bg-blue-50/30 transition">
+                        <i class="fa-solid fa-cloud-arrow-up text-4xl text-gray-300"></i>
+                        <p class="text-sm text-gray-500 mt-2">点击或拖拽文件到此区域上传</p>
+                        <p class="text-xs text-gray-400 mt-1">支持 PDF、Word、Excel 格式，单个文件不超过 50MB</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 flex gap-3">
+                <button class="btn-primary px-6" onclick="alert('模拟：档案上传成功，等待政府端审核')"><i class="fa-solid fa-upload mr-1"></i>提交上传</button>
+                <button class="btn-default"><i class="fa-solid fa-rotate-left mr-1"></i>重置</button>
+            </div>
+        </div>
+    </div>`;
+}
+
+function renderEntMessage() {
+    const { messages } = mockData;
+    return `
+    <div class="space-y-4">
+        <h2 class="text-base font-bold text-gray-800"><i class="fa-regular fa-bell mr-1.5 text-blue-500"></i>消息通知</h2>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+            <div class="flex border-b border-gray-100">
+                <button class="tab-active px-5 py-2.5 text-sm">全部</button>
+                <button class="tab-inactive px-5 py-2.5 text-sm">未读</button>
+                <button class="tab-inactive px-5 py-2.5 text-sm">已读</button>
+            </div>
+            <div class="divide-y divide-gray-50">${[
+                { title: '【审核通过】年产1000万套智能终端项目_立项申请已通过审核', type: '审核通知', time: '2026-06-08 14:30', read: false },
+                { title: '【退回提醒】新型合金材料研发中心_环评报告需补充材料，请尽快修改后重新提交', type: '审核通知', time: '2026-06-07 09:15', read: false },
+                { title: '【审核中】绿色食品加工产业园_验收资料正在审核中，请耐心等待', type: '审核通知', time: '2026-06-06 16:40', read: true },
+                { title: '【上传成功】医药医疗器械生产基地_施工图纸上传成功', type: '系统通知', time: '2026-06-05 11:20', read: true },
+                { title: '【档案推送】政府端向您推送了一份档案：先进储能材料_环评批复', type: '推送通知', time: '2026-06-04 10:00', read: true }
+            ].map(m => `
+                <div class="flex items-start gap-3 px-5 py-3 ${m.read ? '' : 'bg-blue-50/30'} cursor-pointer hover:bg-gray-50">
+                    <span class="mt-1.5 ${m.read ? 'bg-gray-300' : 'bg-blue-500'} w-2 h-2 rounded-full shrink-0"></span>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-sm ${m.read ? 'text-gray-500' : 'text-gray-800 font-medium'}">${m.title}</div>
+                        <div class="flex items-center gap-3 mt-1">
+                            <span class="badge-processing text-[10px] px-1.5 py-0.5 rounded">${m.type}</span>
+                            <span class="text-xs text-gray-400">${m.time}</span>
+                        </div>
+                    </div>
+                </div>`).join('')}
+            </div>
+        </div>
+    </div>`;
+}
+
+function renderEntLog() {
+    const logs = [
+        { time: '2026-06-09 10:30:25', user: '企业管理员', action: '登录系统', result: '成功' },
+        { time: '2026-06-09 10:35:12', user: '企业管理员', action: '上传档案', result: '成功', detail: '上传：年产1000万套智能终端项目_立项申请.pdf' },
+        { time: '2026-06-09 09:15:33', user: '企业管理员', action: '查询档案', result: '成功', detail: '按项目：智能终端' },
+        { time: '2026-06-08 16:40:18', user: '企业管理员', action: '下载档案', result: '成功', detail: '下载：环评报告.pdf' },
+        { time: '2026-06-08 14:22:05', user: '企业管理员', action: '预览档案', result: '成功', detail: '预览：施工图纸_v2.dwg' },
+        { time: '2026-06-08 11:00:00', user: '企业管理员', action: '撤回申请', result: '成功', detail: '撤回：验收资料' },
+        { time: '2026-06-07 09:30:45', user: '企业管理员', action: '登录系统', result: '成功' }
+    ];
+    return `
+    <div class="space-y-4">
+        <h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-clock-rotate-left mr-1.5 text-blue-500"></i>日志查看</h2>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+            <div class="overflow-x-auto">
+                <table class="w-full text-xs">
+                    <thead><tr class="text-gray-500 border-b border-gray-100 bg-gray-50/50">
+                        <th class="text-left px-4 py-2.5 font-medium">时间</th><th class="text-left px-4 py-2.5 font-medium">操作人</th><th class="text-left px-4 py-2.5 font-medium">操作内容</th><th class="text-left px-4 py-2.5 font-medium">结果</th><th class="text-left px-4 py-2.5 font-medium">详情</th>
+                    </tr></thead>
+                    <tbody>${logs.map(l => `
+                        <tr class="border-b border-gray-50 hover:bg-gray-50">
+                            <td class="px-4 py-2.5 text-gray-400">${l.time}</td><td class="px-4 py-2.5">${l.user}</td><td class="px-4 py-2.5">${l.action}</td>
+                            <td class="px-4 py-2.5">${statusBadge(l.result)}</td><td class="px-4 py-2.5 text-gray-400 max-w-[200px] truncate">${l.detail || '—'}</td>
+                        </tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>`;
+}
+
+// ==================== INIT ====================
+generateMockData();
+renderSidebar();
+renderContent();
+</script>
+</body>
+</html>
