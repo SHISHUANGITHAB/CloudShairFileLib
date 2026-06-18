@@ -5,9 +5,11 @@ node_modules/
 __pycache__/
 *.pyc
 CLAUDE.md
+.cc-connect/
 # 原型备份文件
 protosystem/*.bak
 protosystem/*.keep
 protosystem/index.html.v*
 protosystem/js/*.bak
 protosystem/js/*.v*
+protosystem/backups/

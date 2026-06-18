@@ -44,10 +44,22 @@
         .tab-inactive:hover { color: #1890ff; }
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.45); z-index: 1000; align-items: center; justify-content: center; }
         .modal-overlay.show { display: flex; }
-        .modal-box { background: white; border-radius: 8px; width: 640px; max-height: 80vh; overflow-y: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+        .modal-box { background: white; border-radius: 8px; width: 640px; max-height: 80vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+        #modal-body { overflow-y: auto; flex: 1; min-height: 0; }
+        .pj-modal #modal-body { padding-top: 0; }
+        /* 项目档案一览弹窗：标题栏底部不留空 */
+        .pj-modal > div:first-child { padding-bottom: 0 !important; }
         .form-input { border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 11px; font-size: 14px; width: 100%; outline: none; }
         .form-input:focus { border-color: #40a9ff; box-shadow: 0 0 0 2px rgba(24,144,255,0.2); }
         .form-select { border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 11px; font-size: 14px; width: 100%; outline: none; background: white; }
+        .tag-dropdown { position: relative; }
+        .tag-dropdown .trigger { border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 11px; font-size: 14px; width: 100%; cursor: pointer; background: white; display: flex; justify-content: space-between; align-items: center; }
+        .tag-dropdown .trigger:hover { border-color: #40a9ff; }
+        .tag-dropdown .menu { display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #d9d9d9; border-radius: 4px; z-index: 50; max-height: 200px; overflow-y: auto; margin-top: 2px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .tag-dropdown .menu.show { display: block; }
+        .tag-dropdown .menu label { display: flex; align-items: center; gap: 6px; padding: 6px 11px; cursor: pointer; font-size: 13px; }
+        .tag-dropdown .menu label:hover { background: #f5f7fa; }
+        .tag-dropdown .menu label input { accent-color: #1890ff; }
         .btn-primary { background: #1890ff; color: white; border: none; border-radius: 4px; padding: 6px 16px; cursor: pointer; font-size: 14px; }
         .btn-primary:hover { background: #40a9ff; }
         .btn-default { background: white; color: #333; border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 16px; cursor: pointer; font-size: 14px; }
@@ -70,7 +82,7 @@
         ::-webkit-scrollbar-thumb { background: #d9d9d9; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #bfbfbf; }
         /* 项目档案一览组件样式 */
-        .pj-header { margin-bottom: 16px; }
+        .pj-header { position: sticky; top: 0; z-index: 10; background: #fff; padding: 10px 0 12px 0; margin: 0; border-bottom: 1px solid #ebeef5; }
         .pj-header-row { display: flex; align-items: center; gap: 10px; font-size: 14px; }
         .pj-label { color: #606266; font-weight: 500; }
         .pj-value { color: #303133; }
@@ -90,6 +102,24 @@
         .pj-history { color: #909399; font-size: 12px; }
         .pj-empty { color: #c0c4cc; text-align: center; font-style: italic; }
         .pj-footer { text-align: center; margin-top: 18px; padding-bottom: 8px; }
+        /* 档案管理页面样式 */
+        .am-header { background: #fff; border-radius: 8px; border: 1px solid #e5e7eb; padding: 16px 24px; margin-bottom: 16px; display: flex; align-items: center; gap: 40px; }
+        .am-header .am-item { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .am-header .am-label { color: #909399; font-weight: 500; min-width: 5em; white-space: nowrap; }
+        .am-header .am-value { color: #303133; font-weight: 600; }
+        .am-section { background: #f5f7fa; padding: 10px 16px; font-weight: 600; color: #303133; border-left: 4px solid #409eff; margin-top: 16px; margin-bottom: 0; font-size: 15px; }
+        .am-table { width: 100%; border-collapse: collapse; font-size: 13px; border: 1px solid #e5e7eb; }
+        .am-table th { text-align: left; padding: 10px 12px; border-bottom: 1px solid #e5e7eb; background: #fafafa; color: #606266; font-weight: 500; font-size: 13px; }
+        .am-table td { padding: 8px 12px; border-bottom: 1px solid #e5e7eb; color: #303133; vertical-align: middle; }
+        .am-table tr:hover td { background: #f5f7fa; }
+        .am-file-link { color: #409eff; cursor: pointer; text-decoration: none; }
+        .am-file-link:hover { text-decoration: underline; }
+        .am-del { color: #ff4d4f; cursor: pointer; margin-left: 8px; font-size: 14px; }
+        .am-del:hover { color: #ff7875; }
+        .am-btn-upload { background: #409eff; color: #fff; border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 12px; }
+        .am-btn-upload:hover { background: #66b1ff; }
+        .am-perm-select { border: 1px solid #d9d9d9; border-radius: 4px; padding: 3px 6px; font-size: 12px; outline: none; background: #fff; width: 130px; }
+        .am-footer { text-align: center; margin-top: 24px; padding-bottom: 16px; }
         .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; line-height: 1.5; }
         .tag-success { background: #e1f3d8; color: #67c23a; border: 1px solid #c2e7b0; }
         .tag-warning { background: #faecd8; color: #e6a23c; border: 1px solid #f5dab1; }
@@ -375,6 +405,8 @@ function navigate(page) {
     data.menus.forEach(m => {
         if (m.children && m.children.some(c => c.id === page)) expandedMenus.add(m.id);
     });
+    // 档案管理页面展开父菜单
+    if (page === 'archive-manage') expandedMenus.add('archive');
     renderSidebar();
     renderContent();
 }
@@ -399,10 +431,14 @@ function openModal(title, bodyHtml, width, height) {
     document.getElementById('modal-body').innerHTML = bodyHtml;
     document.getElementById('global-modal').classList.add('show');
 }
-function closeModal() { document.getElementById('global-modal').classList.remove('show'); }
+function closeModal() { document.getElementById('global-modal').classList.remove('show'); document.querySelector('.modal-box').classList.remove('pj-modal'); }
 /* 点击背景关闭弹窗功能暂时禁用，排查预览弹窗关闭问题
 document.getElementById('global-modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
 */
+
+// 当前管理的项目与企业（用于档案管理页）
+let currentManageProject = null;
+let currentManageCompany = null;
 
 // ==================== PAGE RENDERERS ====================
 function renderContent() {
@@ -423,6 +459,7 @@ function renderContent() {
         'sys-tag': renderSysTag,
         'log-query': renderLogQuery,
         'log-export': renderLogExport,
+        'archive-manage': renderArchiveManage,
         // ===== 企业端 =====
         'ent-dashboard': renderEntDashboard,
         'ent-archive-list': renderEntArchiveList,
@@ -531,7 +568,7 @@ function renderGovDashboard() {
 
         <!-- 月度档案上传趋势 + 最近动态 -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="bg-white rounded-lg shadow-sm border border-gray-100 px-4 pt-4 pb-[10px]">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 px-4 pt-4 pb-[10px] flex flex-col">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="section-title"><i class="fa-solid fa-chart-bar mr-1"></i>月度档案上传统计</h2>
                 <div class="flex bg-gray-100 rounded overflow-hidden text-xs">
@@ -539,7 +576,7 @@ function renderGovDashboard() {
                     <button class="px-3 py-1 text-gray-600 hover:bg-gray-200">去年</button>
                 </div>
             </div>
-            <div class="flex items-end justify-between h-32 px-2" style="gap:4px">
+            <div class="flex items-end justify-between flex-1 px-2" style="gap:4px">
                 ${monthData.map((v, i) => `
                 <div class="flex flex-col items-center" style="flex:1;max-width:32px">
                     <div class="w-5 bg-blue-400 rounded-t hover:bg-blue-500 cursor-pointer transition-all" style="height:${v * 4}px;min-height:4px" title="${v}份"></div>
@@ -588,13 +625,29 @@ function showArchiveDetail(id) {
     const a = mockData.archives.find(x => x.id === id);
     if (a) openModal('档案详情 - ' + a.title, renderArchiveDetail(a), '582px', null);
 }
+function updateTagTrigger(menu) {
+    var checks = menu.querySelectorAll('input[type=checkbox]:checked');
+    var trigger = menu.previousElementSibling;
+    if (checks.length === 0) {
+        trigger.childNodes[0].textContent = '全部 ';
+    } else {
+        trigger.childNodes[0].textContent = checks.length + ' 个已选 ';
+    }
+}
+// 点击下拉外部关闭
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.tag-dropdown')) {
+        document.querySelectorAll('.tag-dropdown .menu.show').forEach(function(m) { m.classList.remove('show'); });
+    }
+});
+
 function showPreview(id) {
     const a = mockData.archives.find(x => x.id === id);
     if (!a) { alert('未找到档案'); return; }
     const fileMap = {'PDF': 'demo.pdf', 'Word': 'demo.docx', 'Excel': 'demo.xlsx'};
     const fileName = fileMap[a.fileType] || 'demo.png';
-    const fileUrl = 'http://host.docker.internal:9000/' + fileName;
-    const kkUrl = 'http://localhost:8012/onlinePreview?url=' + btoa(fileUrl);
+    const fileUrl = 'http://183.215.41.66:9598/demo/' + fileName;
+    const kkUrl = 'http://183.215.41.66:8012/onlinePreview?url=' + btoa(fileUrl);
     window.open(kkUrl, '_blank');
 }
 function showWithdrawConfirm(id) {
@@ -676,7 +729,12 @@ function renderArchiveSearch() {
                     <select class="form-select text-sm"><option value="">\u5168\u90e8</option>${categories.map(c => `<option>${c}</option>`).join('')}</select>
                 </div>
                 <div><label class="text-xs text-gray-500 block mb-1">\u6863\u6848\u6807\u7b7e</label>
-                    <select class="form-select text-sm"><option value="">\u5168\u90e8</option>${tags.map(t => `<option>${t}</option>`).join('')}</select>
+                    <div class="tag-dropdown">
+                        <div class="trigger" onclick="this.nextElementSibling.classList.toggle('show')">\u5168\u90e8 <span style="font-size:10px;color:#999;">\u25bc</span></div>
+                        <div class="menu" onclick="event.stopPropagation();updateTagTrigger(this)">
+                            ${tags.map(t => `<label><input type="checkbox" class="tag-filter" value="${t}" onchange="event.stopPropagation()"> ${t}</label>`).join('')}
+                        </div>
+                    </div>
                 </div>
                 <div><label class="text-xs text-gray-500 block mb-1">\u5173\u952e\u5b57</label><input class="form-input text-sm" placeholder="\u5168\u6587\u68c0\u7d22\uff08\u6807\u9898/\u6b63\u6587\uff09"></div>
                 <div><label class="text-xs text-gray-500 block mb-1">\u72b6\u6001</label>
@@ -761,7 +819,7 @@ function renderArchiveDetail(a) {
 <div><span class="text-gray-400">状态：</span>${statusBadge(a.status)}</div>\
 <div><span class="text-gray-400">下载次数：</span><span>${a.downloads} 次</span></div></div>\
 <div class="mt-4 pt-4 border-t border-gray-100 flex gap-4">\
-<a href="javascript:void(0)" onclick="window.open('http://localhost:8012/onlinePreview?url='+btoa('http://host.docker.internal:9000/'+({'PDF':'demo.pdf','Word':'demo.docx','Excel':'demo.xlsx'})['${a.fileType}']||'demo.png'),'_blank')" class="btn-primary"><i class="fa-regular fa-eye mr-1"></i>在线预览</a>\
+<a href="javascript:void(0)" onclick="window.open('http://183.215.41.66:8012/onlinePreview?url='+btoa('http://183.215.41.66:9598/demo/'+({'PDF':'demo.pdf','Word':'demo.docx','Excel':'demo.xlsx'})['${a.fileType}']||'demo.png'),'_blank')" class="btn-primary"><i class="fa-regular fa-eye mr-1"></i>在线预览</a>
 <button class="btn-default" onclick="alert('模拟：开始下载 ${a.title}')"><i class="fa-solid fa-download mr-1"></i>下载</button>\
 <button class="btn-default" onclick="closeModal();showPushModal('${a.id}')"><i class="fa-regular fa-paper-plane mr-1"></i>推送</button></div></div>`;
 }
@@ -1128,7 +1186,7 @@ function renderEntArchiveList() {
                     <tbody>${entArchives.slice(0, 10).map(a => `
                         <tr class="border-b border-gray-50 hover:bg-gray-50">
                             <td class="px-4 py-2.5 font-medium text-gray-800">${a.title}</td>
-                            <td class="px-4 py-2.5 max-w-[150px] truncate">${a.project}</td>
+                            <td class="px-4 py-2.5 max-w-[150px] truncate"><a class="text-blue-500 hover:text-blue-700 cursor-pointer hover:underline" onclick="event.stopPropagation();showProjectArchives('${a.project}')">${a.project}</a></td>
                             <td class="px-4 py-2.5">${a.category}</td>
                             <td class="px-4 py-2.5">${statusBadge(a.status)}</td>
                             <td class="px-4 py-2.5 text-gray-400">${a.uploadTime}</td>
@@ -1245,12 +1303,145 @@ function renderEntLog() {
     </div>`;
 }
 
+
+function renderArchiveManage() {
+    var pj = currentManageProject;
+    var co = currentManageCompany;
+    if (!pj) return '<div class="p-8 text-center text-gray-400">请先从档案查询中选择项目</div>';
+    
+    if (typeof window._amCompany === 'undefined') window._amCompany = co || '';
+    if (typeof window._amProject === 'undefined') window._amProject = pj;
+    
+    var curCo = window._amCompany;
+    var curPj = window._amProject;
+    
+    // 当前企业下的项目列表
+    var projOptions = [];
+    var seenProj = {};
+    mockData.archives.forEach(function(a) {
+        if (curCo && a.company !== curCo) return;
+        if (!seenProj[a.project]) { seenProj[a.project] = true; projOptions.push(a.project); }
+    });
+    if (curPj && projOptions.indexOf(curPj) < 0 && projOptions.length > 0) curPj = projOptions[0];
+    if (!curPj && projOptions.length > 0) curPj = projOptions[0];
+    window._amProject = curPj;
+    
+    // 当前项目下的档案
+    var displayArchives = curPj ? mockData.archives.filter(function(a) {
+        if (curCo && a.company !== curCo) return false;
+        return a.project === curPj;
+    }) : [];
+    
+    var catTree = mockData.categoryTree;
+    var cats = Object.keys(catTree);
+    var tagList = mockData.tags || ['重点项目','招商引资','政府投资','企业自筹','PPP项目','高新技术','节能环保','产业升级'];
+    
+    var utc = '上传文件';
+    
+    var html = '<div class="space-y-4">';
+    // 面包屑
+    html += '<h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-folder-open mr-1.5 text-blue-500"></i>档案管理</h2>';
+    
+    // 头部：企业/项目下拉框
+    html += '<div class="am-header">';
+    html += '  <div class="am-item"><span class="am-label">企业名称</span>';
+    html += '    <input class="form-input text-sm" list="am-company-list" value="' + curCo + '" placeholder="输入企业名称模糊匹配" onchange="window._amCompany=this.value;renderContent()">';
+    html += '    <datalist id="am-company-list">' + mockData.companies.map(function(c){return '<option value="'+c+'">';}).join('') + '</datalist>';
+    html += '  </div>';
+    html += '  <div class="am-item"><span class="am-label">项目名称</span>';
+    html += '    <input class="form-input text-sm" list="am-project-list" value="' + curPj + '" placeholder="输入项目名称" onchange="window._amProject=this.value;renderContent()" style="width:320px">';
+    html += '    <datalist id="am-project-list">' + projOptions.map(function(p){return '<option value="'+p+'">';}).join('') + '</datalist>';
+    html += '  </div>';
+    html += '</div>';
+    
+    if (!curPj) {
+        html += '<div class="text-center text-gray-400 py-8">请选择项目查看档案</div>';
+        html += '<div class="am-footer"><button class="btn-default" onclick="navigate(\'archive-search\')">返回</button></div></div>';
+        return html;
+    }
+    
+    // 各分类表格
+    for (var ci = 0; ci < cats.length; ci++) {
+        var cat = cats[ci];
+        var subs = catTree[cat];
+        html += '<div class="am-section">' + cat + '</div>';
+        html += '<table class="am-table"><thead><tr>';
+        html += '<th style="width:10%">分类</th><th style="width:8%;min-width:75px">' + utc + '</th><th style="width:24%">文件名</th>';
+        html += '<th style="width:16%">标签</th><th style="width:12%">历史版本</th><th style="width:14%">更新时间</th><th style="width:16%">权限</th>';
+        html += '</tr></thead><tbody>';
+        for (var si = 0; si < subs.length; si++) {
+            var sub = subs[si];
+            var items = displayArchives.filter(function(a) { return a.subCategory === sub; });
+            if (items.length === 0) {
+                html += '<tr><td>' + sub + '</td><td><button class="am-btn-upload" onclick="event.stopPropagation();showArchiveUploadModal(window._amCompany,window._amProject,\'' + cat + '\',\'' + sub + '\')">' + utc + '</button></td><td colspan="5" style="color:#c0c4cc;text-align:center;font-style:italic;">暂无档案</td></tr>';
+            } else {
+                for (var ii = 0; ii < items.length; ii++) {
+                    var a = items[ii];
+                    html += '<tr>';
+                    if (ii === 0) {
+                        html += '<td rowspan="' + items.length + '" style="font-weight:500;color:#606266;vertical-align:middle;">' + sub + '</td>';
+                        html += '<td rowspan="' + items.length + '"><button class="am-btn-upload" onclick="event.stopPropagation();showArchiveUploadModal(window._amCompany,window._amProject,\'' + cat + '\',\'' + sub + '\')">' + utc + '</button></td>';
+                    }
+                    // 文件名 + 删除按钮
+                    html += '<td><span class="am-file-link" onclick="event.stopPropagation();showPreview(\'' + a.id + '\')">' + a.title + '</span><span class="am-del" onclick="event.stopPropagation();alert(\'\u6a21拟\uff1a删除 ' + a.title + '\')">&times;</span></td>';
+                    // 标签（多选下拉）
+                    var curTags = a.tags && a.tags.length > 0 ? a.tags : ['申报材料'];
+                    html += tagDropdownHtml(a.id, curTags, tagList);
+                    // 历史版本
+                    html += '<td style="color:#909399;font-size:12px;">' + (a.downloads > 50 || (parseInt(a.id.replace(/[^0-9]/g,''))||0) % 3 === 0 ? '<span class="am-file-link" onclick="event.stopPropagation();alert(\'\u6a21拟\uff1a查看历史版本\')">查看</span>' : '-') + '</td>';
+                    // 更新时间（格式 yyyy.mm.dd HH:MM）
+                    var ut2 = a.uploadTime || '';
+                    if (ut2 && ut2.length >= 10) { ut2 = ut2.replace(/-/g, '.') + ' 00:00'; }
+                    html += '<td style="color:#909399;font-size:12px;">' + (ut2 || '-') + '</td>';
+                    // 权限
+                    html += '<td><select class="am-perm-select" onchange="event.stopPropagation();">';
+                    html += '<option>' + (a.status === '已归档' ? '所有用户可访问' : '所有用户不可访问') + '</option>';
+                    html += '<option>所有用户可访问</option><option>指定用户访问</option><option>指定角色访问</option>';
+                    html += '</select></td>';
+                    html += '</tr>';
+                }
+            }
+        }
+        html += '</tbody></table>';
+    }
+    html += '<div class="am-footer"><button class="btn-default" onclick="navigate(\'archive-search\')">返回</button></div>';
+    html += '</div>';
+    return html;
+}
+
+function tagDropdownHtml(archiveId, curTags, allTags) {
+    var html = '<td><div class="tag-dropdown" style="position:relative;width:130px;">';
+    html += '  <div class="trigger" style="font-size:12px;padding:3px 8px;" onclick="event.stopPropagation();this.nextElementSibling.classList.toggle(\'show\')">' + curTags[0] + (curTags.length > 1 ? ' +' + (curTags.length-1) : '') + ' <span style="font-size:9px;color:#999;">▼</span></div>';
+    html += '  <div class="menu" style="font-size:12px;" onclick="event.stopPropagation();_amUpdateTag(this,\'' + archiveId + '\')">';
+    allTags.forEach(function(t) {
+        var checked = curTags.indexOf(t) >= 0 ? 'checked' : '';
+        html += '    <label><input type="checkbox" ' + checked + ' value="' + t.replace(/'/g,"\'") + '" onchange="event.stopPropagation()"> ' + t + '</label>';
+    });
+    html += '  </div></div></td>';
+    return html;
+}
+
+function _amUpdateTag(menu, archiveId) {
+    var checks = menu.querySelectorAll('input[type=checkbox]:checked');
+    var trigger = menu.previousElementSibling;
+    var tags = [];
+    checks.forEach(function(c) { tags.push(c.value); });
+    if (tags.length === 0) {
+        trigger.childNodes[0].textContent = '请选择 ';
+    } else {
+        trigger.childNodes[0].textContent = tags[0] + (tags.length > 1 ? ' +' + (tags.length-1) : ' ');
+    }
+    var archive = mockData.archives.find(function(a) { return a.id === archiveId; });
+    if (archive) archive.tags = tags;
+}
+
 // ==================== INIT ====================
 generateMockData();
 renderSidebar();
 renderContent();
 </script>
 <script src="js/push-dialog.js"></script>
-<script src="js/project-archives.js"></script>
+<script src="js/project-archives.js?v=2"></script>
+<script src="js/archive-upload.js"></script>
 </body>
 </html>

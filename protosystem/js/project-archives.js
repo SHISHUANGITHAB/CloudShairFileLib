@@ -77,10 +77,13 @@ function showProjectArchives(projectName) {
         bodyHtml += '</tbody></table>';
     }
 
-    bodyHtml += '<div class="pj-footer"><button class="btn-default" onclick="closeModal()">关闭</button></div>';
+    currentManageCompany = company;
+    currentManageProject = projectName;
+    bodyHtml += '<div class="pj-footer"><button class="btn-primary" onclick="closeModal();setTimeout(function(){navigate(\'archive-manage\')},100)" style="margin-right:8px">档案管理</button><button class="btn-default" onclick="closeModal()">关闭</button></div>';
 
     var wh = Math.min(window.innerHeight * 0.88, 680);
     var wd = Math.round(Math.min(wh * 1.618, 860));
+    document.querySelector('.modal-box').classList.add('pj-modal');
     openModal('项目档案一览 - ' + projectName, bodyHtml, wd + 'px', wh + 'px');
 }
 
