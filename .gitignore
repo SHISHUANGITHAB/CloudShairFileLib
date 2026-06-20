@@ -13,3 +13,5 @@ protosystem/index.html.v*
 protosystem/js/*.bak
 protosystem/js/*.v*
 protosystem/backups/
+# 临时截图
+protosystem/screenshot.png

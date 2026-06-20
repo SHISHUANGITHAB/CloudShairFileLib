@@ -79,7 +79,8 @@ function showProjectArchives(projectName) {
 
     currentManageCompany = company;
     currentManageProject = projectName;
-    bodyHtml += '<div class="pj-footer"><button class="btn-primary" onclick="closeModal();setTimeout(function(){navigate(\'archive-manage\')},100)" style="margin-right:8px">档案管理</button><button class="btn-default" onclick="closeModal()">关闭</button></div>';
+
+    var _pjIdStr = "'" + projectArchives.map(function(a){return a.id;}).join("','") + "'";    bodyHtml += '<div class="pj-footer"><button class="btn-primary" onclick="closeModal();setTimeout(function(){navigate(\'archive-manage\')},100)" style="margin-right:8px">档案管理</button><button class="btn-primary" onclick="closeModal();setTimeout(function(){selectedPushArchives.clear();[' + _pjIdStr + '].forEach(function(id){selectedPushArchives.add(id)});showBatchPushModal()},100)" style="margin-right:8px">推送</button><button class="btn-default" onclick="closeModal()">关闭</button></div>';
 
     var wh = Math.min(window.innerHeight * 0.88, 680);
     var wd = Math.round(Math.min(wh * 1.618, 860));
