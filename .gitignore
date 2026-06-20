@@ -1,11 +1,21 @@
-node_modules/
-.env
-*.log
-.DS_Store
-__pycache__/
-*.pyc
+# 只追踪 protosystem/ 目录下的原型系统
+# 其他所有目录和文件全部忽略
+
+# 需求文档
+01_需求阶段/
+
+# v1初始原型
+02_原型系统/
+
+# 项目记忆（内部文档，不上GitHub）
+99_project-memory/
+
+# 根目录文件
+README.md
 CLAUDE.md
-.cc-connect/
+chi_sim.traineddata
+.gitignore
+
 # 原型备份文件
 protosystem/*.bak
 protosystem/*.keep
@@ -13,5 +23,13 @@ protosystem/index.html.v*
 protosystem/js/*.bak
 protosystem/js/*.v*
 protosystem/backups/
-# 临时截图
 protosystem/screenshot.png
+
+# 通用忽略
+node_modules/
+.env
+*.log
+.DS_Store
+__pycache__/
+*.pyc
+.cc-connect/
