@@ -10,6 +10,8 @@
 - **企业端** — 查看本企业项目档案、撤回、送审
 - **角色切换** — 支持政府端/企业端视图切换（Mock 数据）
 
+![原型截图](protosystem/screenshot.png)
+
 ## 使用方式
 
 直接打开 `protosystem/index.html` 即可，无需构建。
